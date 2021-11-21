@@ -1,2 +1,2 @@
 # shop-alisan
- Initial Slicing
+ Initial Slicing UI
