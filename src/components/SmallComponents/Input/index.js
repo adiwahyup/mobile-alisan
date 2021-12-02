@@ -12,6 +12,7 @@ const Input = ({
   value,
   secureTextEntry,
   keyboardType,
+  onChangeText,
 }) => {
   if (textarea) {
     return (
@@ -22,6 +23,7 @@ const Input = ({
           multiline={true}
           numberOfLines={3}
           value={value}
+          onChangeText={onChangeText}
         />
       </View>
     );
@@ -34,6 +36,7 @@ const Input = ({
         value={value}
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
+        onChangeText={onChangeText}
       />
     </View>
   );

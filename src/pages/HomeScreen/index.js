@@ -10,7 +10,7 @@ import {
 import { colors, fonts } from '../../utils';
 import { dummyCategory, dummyShirt } from '../../data';
 
-export default class HomeScreen extends Component {
+class HomeScreen extends Component {
   constructor(props) {
     super(props);
 
@@ -45,6 +45,8 @@ export default class HomeScreen extends Component {
     );
   }
 }
+
+export default HomeScreen;
 
 const styles = StyleSheet.create({
   page: {

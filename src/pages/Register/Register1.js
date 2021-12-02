@@ -8,12 +8,36 @@ import {
   Keyboard,
   Platform,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { Button, Input, Distance } from '../../components';
 import { colors, fonts, responsiveHeight } from '../../utils';
 
 export default class Register1 extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: '',
+      email: '',
+      phone: '',
+      password: '',
+    };
+  }
+
+  onContinue = () => {
+    const { name, email, phone, password } = this.state;
+    if (name && email && phone && password) {
+      /* validate fields then navigate to register 2
+      and bring the state of the filled fields to register 2 */
+
+      this.props.navigation.navigate('Register2', this.state);
+    } else {
+      Alert.alert('Error', 'Semua bidang harus diisi');
+    }
+  };
+
   render() {
+    const { name, email, phone, password } = this.state;
     return (
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -33,10 +57,28 @@ export default class Register1 extends Component {
             </View>
 
             <View style={styles.cardSignup}>
-              <Input label="Nama" />
-              <Input label="Email" />
-              <Input label="Phone Number" keyboardType="number-pad" />
-              <Input label="Password" secureTextEntry />
+              <Input
+                label="Name"
+                value={name}
+                onChangeText={name => this.setState({ name })}
+              />
+              <Input
+                label="Email"
+                value={email}
+                onChangeText={email => this.setState({ email })}
+              />
+              <Input
+                label="Phone Number"
+                keyboardType="number-pad"
+                value={phone}
+                onChangeText={phone => this.setState({ phone })}
+              />
+              <Input
+                label="Password"
+                secureTextEntry
+                value={password}
+                onChangeText={password => this.setState({ password })}
+              />
 
               <Distance height={30} />
 
@@ -46,7 +88,7 @@ export default class Register1 extends Component {
                 icon="submit"
                 padding={12}
                 fontSize={17}
-                onPress={() => this.props.navigation.navigate('Register2')}
+                onPress={() => this.onContinue()}
               />
             </View>
           </ScrollView>

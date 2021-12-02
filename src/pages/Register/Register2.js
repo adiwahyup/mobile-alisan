@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import React, { Component } from 'react';
 import {
   Text,
@@ -8,22 +9,68 @@ import {
   Keyboard,
   Platform,
   ScrollView,
+  Alert,
 } from 'react-native';
+import { connect } from 'react-redux';
 import { Button, Input, Distance, Option } from '../../components';
 import { colors, fonts, responsiveHeight } from '../../utils';
+import { getProvinceList, getCityList } from '../../actions/RajaOngkirAction';
 
-export default class Register2 extends Component {
+class Register2 extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      dataProvince: [],
-      dataCity: [],
+      address: '',
+      city: false,
+      province: false,
     };
   }
 
+  componentDidMount() {
+    this.props.dispatch(getProvinceList());
+  }
+
+  componentDidUpdate(prevProps) {
+    const { registerResult } = this.props;
+
+    if (registerResult && prevProps.registerResult !== registerResult) {
+      this.props.navigation.replace('MainApp');
+    }
+  }
+
+  changeProvince = province => {
+    this.setState({
+      province: province,
+    });
+
+    this.props.dispatch(getCityList(province));
+  };
+
+  onContinue = () => {
+    const { address, city, province } = this.state;
+    if (address && city && province) {
+      const data = {
+        name: this.props.route.params.name,
+        email: this.props.route.params.email,
+        phone: this.props.route.params.phone,
+        address: address,
+        province: province,
+        city: city,
+      };
+
+      // menuju Auth Action
+      // console.log('Data Diri : ', data);
+      // this.props.dispatch(registerUser(data, password));
+    } else {
+      Alert.alert('Error', 'Semua bidang harus diisi');
+    }
+  };
+
   render() {
-    const { dataCity, dataProvince } = this.state;
+    const { address, city, province } = this.state;
+    const { getProvinceResult, getCityResult } = this.props;
+    // console.log(getCityResult);
     return (
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -38,14 +85,29 @@ export default class Register2 extends Component {
             </View>
 
             <View style={styles.signup}>
-              <Text style={styles.title}> Fill your Address </Text>
+              <Text style={styles.title}> Fill in your Address </Text>
             </View>
 
             <View style={styles.cardSignup}>
-              <Input label="Alamat" textarea />
+              <Input
+                label="Alamat"
+                textarea
+                onChangeText={address => this.setState({ address })}
+                value={address}
+              />
 
-              <Option label="Kota/Kab" datas={dataCity} />
-              <Option label="Provinsi" datas={dataProvince} />
+              <Option
+                label="Provinsi"
+                datas={getProvinceResult ? getProvinceResult : []}
+                selectedValue={province}
+                onValueChange={province => this.changeProvince(province)}
+              />
+              <Option
+                label="Kota/Kab"
+                datas={getCityResult ? getCityResult : []}
+                selectedValue={city}
+                onValueChange={city => this.setState({ city: city })}
+              />
 
               <Distance height={30} />
 
@@ -55,7 +117,7 @@ export default class Register2 extends Component {
                 icon="submit"
                 padding={12}
                 fontSize={17}
-                onPress={() => this.props.navigation.navigate('MainApp')}
+                onPress={() => this.onContinue()}
               />
             </View>
           </ScrollView>
@@ -64,6 +126,13 @@ export default class Register2 extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  getProvinceResult: state.RajaOngkirReducer.getProvinceResult,
+  getCityResult: state.RajaOngkirReducer.getCityResult,
+});
+
+export default connect(mapStateToProps, null)(Register2);
 
 const styles = StyleSheet.create({
   page: {
