@@ -1,63 +1,107 @@
-import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import React, { Component } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
+import { connect } from 'react-redux';
 import {
   colors,
   responsiveHeight,
   responsiveWidth,
-  numberWithCommas,
+  numberFormat,
   fonts,
 } from '../../../utils';
 import Distance from '../Distance';
+import { updateStatus } from '../../../actions/HistoryAction';
 
-const CardHistory = ({ order }) => {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.date}>{order.date}</Text>
-      {order.orders.map((history, index) => {
-        return (
-          <View key={index} style={styles.history}>
-            <Text style={styles.textBold}>{index + 1}. </Text>
-            <Image source={history.product.gambar[0]} style={styles.shirt} />
-            <View style={styles.desc}>
-              <Text style={styles.nama}>{history.product.nama}</Text>
-              <Text style={styles.harga}>
-                Rp {numberWithCommas(history.product.harga)}
-              </Text>
+class CardHistory extends Component {
+  componentDidMount() {
+    const { order } = this.props;
+    // this.props.dispatch(updateStatus(order.order_id));
+  }
+  payNow = () => {
+    const { order } = this.props;
+    if (order.status === 'paid') {
+      Alert.alert('Info', 'You have paid for this order');
+    } else {
+      this.props.navigation.navigate('Payment', {
+        order_redirect_url: order.order_redirect_url,
+      });
+    }
+  };
+  render() {
+    const { order, updateStatusLoading } = this.props;
+    console.log('Order', order);
 
-              <Distance height={10} />
+    const history = order.orders;
+    return (
+      <TouchableOpacity style={styles.container} onPress={() => this.payNow()}>
+        <Text style={styles.date}>{order.date}</Text>
+        {Object.keys(history).map((key, index) => {
+          return (
+            <View key={index} style={styles.history}>
+              <Text style={styles.textBold}>{index + 1}.</Text>
+              <Image
+                source={{ uri: history[key].product.product_picture[0] }}
+                style={styles.product}
+              />
+              <View style={styles.desc}>
+                <Text style={styles.name}>
+                  {history[key].product.product_name}
+                </Text>
+                <Text style={styles.price}>
+                  Rp {numberFormat(history[key].product.product_price)}
+                </Text>
 
-              <Text style={styles.textBold}>
-                Jumlah : {history.jumlahPesan}
-              </Text>
-              <Text style={styles.textBold}>
-                Total Harga : {numberWithCommas(history.totalHarga)}
-              </Text>
+                <Distance height={3} />
+
+                <Text style={styles.textBold}>
+                  Quantity : {history[key].qty}
+                </Text>
+                <Text style={styles.textBold}>
+                  Total Price : Rp {numberFormat(history[key].totalPrice)}
+                </Text>
+              </View>
             </View>
+          );
+        })}
+
+        <Distance height={10} />
+        <View style={styles.footer}>
+          <View style={styles.label}>
+            <Text style={styles.textBlueLeft}>Status :</Text>
+            <Text style={styles.textBlueLeft}>
+              Estimation ({order.order_estimation}) days :
+            </Text>
+            <Text style={styles.textBlueLeft}>Total Price :</Text>
           </View>
-        );
-      })}
 
-      <Distance height={10} />
-      <View style={styles.footer}>
-        <View style={styles.label}>
-          <Text style={styles.textBlue}>Status :</Text>
-          <Text style={styles.textBlue}>Ongkir (2-3 Hari) :</Text>
-          <Text style={styles.textBlue}>Total Harga :</Text>
+          <View style={styles.label}>
+            <Text style={styles.textBlueRight}>
+              {updateStatusLoading ? 'Loading' : order.order_status}
+            </Text>
+            <Text style={styles.textBlueRight}>
+              {numberFormat(order.order_shipping_cost)}
+            </Text>
+            <Text style={styles.textBlueRight}>
+              Rp {numberFormat(order.totalPrice + order.order_shipping_cost)}
+            </Text>
+          </View>
         </View>
+      </TouchableOpacity>
+    );
+  }
+}
 
-        <View style={styles.label}>
-          <Text style={styles.textBlue}>{order.status}</Text>
-          <Text style={styles.textBlue}>Rp 15.000</Text>
-          <Text style={styles.textBlue}>
-            Rp {numberWithCommas(order.totalHarga + 15000)}
-          </Text>
-        </View>
-      </View>
-    </View>
-  );
-};
+const mapStateToProps = state => ({
+  updateStatusLoading: state.HistoryReducer.updateStatusLoading,
+});
 
-export default CardHistory;
+export default connect(mapStateToProps, null)(CardHistory);
 
 const styles = StyleSheet.create({
   container: {
@@ -69,17 +113,18 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-
-    elevation: 5,
+    elevation: 10,
     padding: 10,
     borderRadius: 15,
-    marginBottom: 20,
+    marginTop: -15,
+    marginBottom: 30,
   },
   history: {
     flexDirection: 'row',
-    marginTop: 10,
+    marginTop: 8,
+    marginHorizontal: 5,
   },
-  shirt: {
+  product: {
     width: responsiveWidth(66),
     height: responsiveHeight(66),
   },
@@ -88,18 +133,19 @@ const styles = StyleSheet.create({
     fontFamily: fonts.primary.bold,
   },
   textBold: {
-    fontSize: 12,
-    fontFamily: fonts.primary.bold,
-  },
-  desc: {
-    marginLeft: responsiveWidth(7),
-  },
-  nama: {
     fontSize: 13,
     fontFamily: fonts.primary.bold,
   },
-  harga: {
-    fontSize: 12,
+  desc: {
+    marginLeft: responsiveWidth(6),
+  },
+  name: {
+    fontSize: 13,
+    fontFamily: fonts.primary.bold,
+    width: responsiveWidth(250),
+  },
+  price: {
+    fontSize: 13,
     fontFamily: fonts.primary.reguler,
   },
   footer: {
@@ -108,11 +154,18 @@ const styles = StyleSheet.create({
   label: {
     flex: 1,
   },
-  textBlue: {
-    fontSize: 13,
+  textBlueRight: {
+    fontSize: 12,
     fontFamily: fonts.primary.bold,
     color: colors.primary,
     textTransform: 'uppercase',
     textAlign: 'right',
+  },
+  textBlueLeft: {
+    fontSize: 12,
+    fontFamily: fonts.primary.bold,
+    color: colors.primary,
+    textTransform: 'uppercase',
+    textAlign: 'left',
   },
 });

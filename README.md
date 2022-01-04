@@ -1,2 +1,2 @@
-# shop-alisan
+# mobile-alisan
  Initial Slicing UI

@@ -1,25 +1,74 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
+import { connect } from 'react-redux';
 import { Button, Distance, Input } from '../../components';
 import { colors, fonts } from '../../utils';
+import { loginUser } from '../../actions/AuthAction';
 
-export default class Login extends Component {
+class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: '',
+      password: '',
+    };
+  }
+
+  login = () => {
+    const { email, password } = this.state;
+    if (email && password) {
+      const data = {
+        email: email,
+        password: password,
+      };
+      this.props.dispatch(loginUser(data));
+    } else {
+      alert('Email & Password harus diisi');
+    }
+  };
+
+  componentDidUpdate(prevProps) {
+    const { loginResult } = this.props;
+
+    if (loginResult && prevProps.loginResult !== loginResult) {
+      this.props.navigation.replace('MainApp');
+    }
+  }
+
   render() {
+    const { email, password } = this.state;
+    const { loginLoading } = this.props;
     return (
       <View style={styles.page}>
         <View style={styles.cardLogin}>
-          <Input label="Email" />
-          <Input label="Password" secureTextEntry />
+          <Input
+            label="Email"
+            value={email}
+            onChangeText={email => this.setState({ email })}
+          />
+          <Input
+            label="Password"
+            secureTextEntry
+            value={password}
+            onChangeText={password => this.setState({ password })}
+          />
 
           <Distance height={30} />
-          <Button title="Login" type="text" padding={12} fontSize={17} />
+          <Button
+            title="Login"
+            type="text"
+            padding={12}
+            fontSize={17}
+            loading={loginLoading}
+            onPress={() => this.login()}
+          />
         </View>
 
         <View style={styles.register}>
           <Text style={styles.textBlue}>Don't have an Account?</Text>
           <Text
             style={styles.textBlue}
-            onPress={() => this.props.navigation.navigate('Register1')}>
+            onPress={() => this.props.navigation.navigate('Register')}>
             Signup now
           </Text>
         </View>
@@ -27,6 +76,13 @@ export default class Login extends Component {
     );
   }
 }
+const mapStateToProps = state => ({
+  loginLoading: state.AuthReducer.loginLoading,
+  loginResult: state.AuthReducer.loginResult,
+  loginError: state.AuthReducer.loginError,
+});
+
+export default connect(mapStateToProps, null)(Login);
 
 const styles = StyleSheet.create({
   page: {

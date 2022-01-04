@@ -1,13 +1,20 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IconArrowRight } from '../../../assets';
-import { colors, responsiveHeight, fonts } from '../../../utils';
+import { colors, responsiveHeight, fonts, clearStorage } from '../../../utils';
 
 const CardMenu = ({ menu, navigation }) => {
+  const onSubmit = () => {
+    if (menu.nama === 'Sign Out') {
+      console.log('Logout');
+      clearStorage();
+      navigation.replace('MainApp');
+    } else {
+      navigation.navigate(menu.page);
+    }
+  };
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() => navigation.navigate(menu.page)}>
+    <TouchableOpacity style={styles.container} onPress={() => onSubmit()}>
       <View style={styles.menu}>
         {menu.gambar}
         <Text style={styles.text}>{menu.nama}</Text>
@@ -32,16 +39,16 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5,
-    marginHorizontal: 30,
-    padding: responsiveHeight(15),
-    borderRadius: 10,
+    elevation: 15,
+    marginHorizontal: 25,
+    padding: responsiveHeight(21),
+    borderRadius: 17,
     alignItems: 'center',
   },
   text: {
     fontSize: 18,
     fontFamily: fonts.primary.bold,
-    marginLeft: 20,
+    marginLeft: 22,
   },
   menu: {
     flexDirection: 'row',

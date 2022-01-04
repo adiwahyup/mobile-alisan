@@ -1,4 +1,4 @@
-import { ProfilePic } from '../../assets';
+import { DefaultPic } from '../../assets';
 
 export const dummyProfile = {
   name: 'Adi Wahyu Pratama',
@@ -7,5 +7,5 @@ export const dummyProfile = {
   address: 'Jalan Maulana Hasanudin No 12',
   city: 'Tangerang',
   province: 'Banten',
-  avatar: ProfilePic,
+  avatar: DefaultPic,
 };

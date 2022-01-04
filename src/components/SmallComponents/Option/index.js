@@ -12,6 +12,7 @@ const Option = ({
   selectedValue,
   onValueChange,
 }) => {
+  // console.log('test datas', datas);
   return (
     <View style={styles.container}>
       <Text styles={styles.label(fontSize)}>{label} :</Text>
@@ -20,9 +21,9 @@ const Option = ({
           selectedValue={selectedValue}
           style={styles.picker(width, height, fontSize)}
           onValueChange={onValueChange}>
-          <Picker.Item label="--Pilih--" value="" />
+          <Picker.Item label="--Choose--" value="" />
           {datas.map((item, index) => {
-            if (label === 'Provinsi') {
+            if (label === 'Province') {
               return (
                 <Picker.Item
                   label={item.province}
@@ -30,18 +31,44 @@ const Option = ({
                   key={item.province_id}
                 />
               );
-            } else if (label === 'Kota/Kab') {
+            } else if (label === 'City/District') {
               return (
                 <Picker.Item
                   label={item.type + ' ' + item.city_name}
-                  value={item.city_id}
+                  value={item}
                   key={item.city_id}
+                />
+              );
+            } else if (label === 'Expedition') {
+              return (
+                <Picker.Item label={item.label} value={item} key={item.id} />
+              );
+            } else if (label === 'Package') {
+              return (
+                <Picker.Item
+                  label={item.service + ' ' + '(' + item.description + ')'}
+                  value={item}
+                  key={new Date().getMilliseconds + Math.random()}
                 />
               );
             } else {
               return <Picker.Item label={item} value={item} key={index} />;
             }
           })}
+          {/* {Object.keys(datas).map((key, index) => {
+            console.log(datas[key].ssp_size);
+            if (label === 'Size') {
+              return (
+                <Picker.Item
+                  label={datas[key].ssp_size}
+                  value={datas[key]}
+                  key={datas[key].ssp_id}
+                />
+              );
+            } else {
+              // return <Picker.Item label={item} value={item} key={index} />;
+            }
+          })} */}
         </Picker>
       </View>
     </View>
@@ -52,7 +79,15 @@ export default Option;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 10,
+    marginTop: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 6.84,
+    elevation: 5,
   },
   label: fontSize => ({
     fontSize: fontSize ? fontSize : 18,
@@ -62,13 +97,13 @@ const styles = StyleSheet.create({
     fontSize: fontSize ? fontSize : 18,
     fontFamily: fonts.primary.reguler,
     width: width,
-    height: height ? height : responsiveHeight(38),
+    height: height ? height : responsiveHeight(42),
     marginTop: -10,
     marginBottom: 10,
   }),
   wrapPicker: {
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 15,
     borderColor: colors.border,
   },
 });

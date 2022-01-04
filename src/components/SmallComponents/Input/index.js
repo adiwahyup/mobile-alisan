@@ -13,6 +13,7 @@ const Input = ({
   secureTextEntry,
   keyboardType,
   onChangeText,
+  disabled,
 }) => {
   if (textarea) {
     return (
@@ -24,6 +25,7 @@ const Input = ({
           numberOfLines={3}
           value={value}
           onChangeText={onChangeText}
+          editable={disabled ? false : true}
         />
       </View>
     );
@@ -37,6 +39,7 @@ const Input = ({
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
         onChangeText={onChangeText}
+        editable={disabled ? false : true}
       />
     </View>
   );
@@ -67,7 +70,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize ? fontSize : 18,
     fontFamily: fonts.primary.reguler,
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     borderColor: colors.border,
     paddingVertical: 5,
     paddingHorizontal: 10,

@@ -1,87 +1,241 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, View } from 'react-native';
+import { Text, StyleSheet, View, ScrollView, Alert } from 'react-native';
+import { connect } from 'react-redux';
 import { CardAddress, Option, Distance, Button } from '../../components';
-import { colors, fonts, numberWithCommas, responsiveHeight } from '../../utils';
-import { dummyProfile, dummyOrder } from '../../data';
+import {
+  colors,
+  fonts,
+  getData,
+  numberFormat,
+  responsiveHeight,
+} from '../../utils';
+import {
+  getProvinceList,
+  getCityList,
+  shippingCost,
+} from '../../actions/RajaOngkirAction';
+import { couriers } from '../../data';
+import { postOrder } from '../../actions/OrderAction';
 
-export default class Checkout extends Component {
+class Checkout extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      profile: dummyProfile,
-      order: dummyOrder[0],
-      ekspedisi: [],
+      profile: false,
+      user_id: '',
+      couriers: couriers,
+      expedition: false,
+      serviceSelected: false,
+      service: '',
+      shippingCost: 0,
+      estimation: '',
+      productCart: '',
+      cart: this.props.route.params.dataProduct,
+      subTotal: this.props.route.params.totalPrice,
+      totalWeight: this.props.route.params.totalWeight,
+      city: false,
+      province: false,
+      address: '',
     };
   }
+  componentDidMount() {
+    this.getUserData();
+    this.props.dispatch(getProvinceList());
+  }
+
+  getUserData = () => {
+    getData('user').then(res => {
+      const data = res;
+
+      if (data) {
+        this.setState({
+          user_id: data.id,
+          address: data.address,
+        });
+      } else {
+        this.props.navigation.replace('Login');
+      }
+    });
+  };
+
+  // componentDidUpdate(prevProps) {
+  //   const { postOrderResult } = this.props;
+
+  //   if (postOrderResult && prevProps.postOrderResult !== postOrderResult) {
+  //     console.log('params post order api: ', postOrderResult);
+  //     const params = {
+  //       redirect_url: postOrderResult.snaptoken.redirect_url,
+  //       token: postOrderResult.snaptoken.token,
+  //     };
+  //     this.props.navigation.navigate('Payment', params);
+  //   }
+  // }
+
+  changeProvince = province => {
+    this.setState({
+      province: province,
+    });
+    this.props.dispatch(getCityList(province));
+  };
+
+  changeCouriers = expedition => {
+    if (expedition) {
+      this.setState({
+        expedition: expedition,
+      });
+      this.props.dispatch(shippingCost(this.state, expedition));
+    }
+  };
+
+  setCity = city => {
+    const { cart } = this.state;
+    let product = Object.keys(cart).map((key, index) => {
+      // delete cart[key].totalWeight;
+      return cart[key];
+    });
+
+    if (city) {
+      this.setState({
+        city: city,
+        productCart: product,
+      });
+    }
+  };
+
+  serviceSelected = service => {
+    if (service) {
+      this.setState({
+        serviceSelected: service,
+        service: service.service,
+        shippingCost: service.cost[0].value,
+        estimation: service.cost[0].etd,
+      });
+    }
+  };
+
+  yourOrder = () => {
+    if (this.state.shippingCost !== 0) {
+      this.props.dispatch(postOrder(this.state));
+      this.props.navigation.navigate('Order', this.state);
+    } else {
+      Alert.alert('Error', 'Please choose package first');
+    }
+  };
+
   render() {
-    const { profile, order, ekspedisi } = this.state;
+    const {
+      expedition,
+      couriers,
+      totalWeight,
+      address,
+      city,
+      province,
+      shippingCost,
+      estimation,
+      serviceSelected,
+      subTotal,
+    } = this.state;
+
+    const { getCityResult, getProvinceResult, costResult, navigation } =
+      this.props;
+
     return (
-      <View style={styles.pages}>
+      <ScrollView style={styles.pages} showsVerticalScrollIndicator={false}>
         <View style={styles.isi}>
-          <Text style={styles.textBold}>
-            Apakah alamat dibawah ini sudah sesuai?
-          </Text>
-          <CardAddress profile={profile} />
-          <View style={styles.total}>
-            <Text style={styles.textBold}>Total Harga : </Text>
-            <Text style={styles.textBold}>
-              Rp {numberWithCommas(order.totalHarga)}
-            </Text>
+          <Text style={styles.textBold}>Is this your correct address?</Text>
+          <CardAddress
+            address={address}
+            province={province}
+            city={city}
+            navigation={navigation}
+          />
+          <View style={styles.price}>
+            <Text style={styles.textBold}>Product Price: </Text>
+            <Text style={styles.textBold}>Rp {numberFormat(subTotal)}</Text>
           </View>
+          <Option
+            label="Province"
+            datas={getProvinceResult ? getProvinceResult : []}
+            selectedValue={province}
+            onValueChange={province => this.changeProvince(province)}
+          />
+          <Option
+            label="City/District"
+            datas={getCityResult ? getCityResult : []}
+            selectedValue={city}
+            onValueChange={(city, index) => this.setCity(city)}
+          />
+          <Option
+            label="Expedition"
+            datas={couriers}
+            selectedValue={expedition}
+            onValueChange={expedition => this.changeCouriers(expedition)}
+          />
+          <Option
+            label="Package"
+            datas={costResult ? costResult : []}
+            selectedValue={serviceSelected}
+            onValueChange={serviceSelected =>
+              this.serviceSelected(serviceSelected)
+            }
+          />
 
-          <Option label="Pilih Ekspedisi" datas={ekspedisi} />
-          <Distance height={50} />
+          <Distance height={18} />
 
-          <Text style={styles.textBold}>Biaya Ongkir :</Text>
-
+          <Text style={styles.textBold}>Shipping Cost :</Text>
           <View style={styles.ongkir}>
-            <Text style={styles.text}>Berat Produk : {order.berat} kg </Text>
-            <Text style={styles.textBold}>Rp {numberWithCommas(15000)}</Text>
+            <Text style={styles.text}>Total Weight : {totalWeight} gram</Text>
+            <Text style={styles.textBold}>Rp {numberFormat(shippingCost)}</Text>
           </View>
-
           <View style={styles.ongkir}>
-            <Text style={styles.text}>Estimasi Waktu :</Text>
-            <Text style={styles.textBold}>2-3 Hari</Text>
+            <Text style={styles.text}>Estimated Time (in days):</Text>
+            <Text style={styles.textBold}>{estimation}</Text>
           </View>
         </View>
 
-        <Distance height={responsiveHeight(40)} />
         <View style={styles.footer}>
-          {/* Total Harga */}
           <View style={styles.total}>
-            <Text style={styles.textBold}>Total Harga : </Text>
+            <Text style={styles.textBold}>Total Price : </Text>
             <Text style={styles.textBold}>
-              Rp {numberWithCommas(order.totalHarga + 15000)}
+              Rp{numberFormat(subTotal + shippingCost)}
             </Text>
           </View>
 
-          {/* Tombol */}
           <Button
-            title="Bayar"
+            title="Continue"
             type="textIcon"
             fontSize={18}
             padding={responsiveHeight(15)}
             icon="keranjang-putih"
-            onPress={() => this.props.navigation.navigate('Checkout')}
+            onPress={() => this.yourOrder()}
           />
         </View>
-      </View>
+      </ScrollView>
     );
   }
 }
+
+const mapStateToProps = state => ({
+  getProvinceResult: state.RajaOngkirReducer.getProvinceResult,
+  getCityResult: state.RajaOngkirReducer.getCityResult,
+
+  costResult: state.RajaOngkirReducer.costResult,
+});
+export default connect(mapStateToProps, null)(Checkout);
 
 const styles = StyleSheet.create({
   pages: {
     flex: 1,
     backgroundColor: colors.white,
     paddingTop: 20,
+    marginTop: 10,
   },
   isi: {
     paddingHorizontal: 30,
   },
   textBold: {
-    fontSize: 17,
+    fontSize: 18,
     fontFamily: fonts.primary.bold,
   },
   text: {
@@ -91,13 +245,21 @@ const styles = StyleSheet.create({
   total: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 30,
+    marginVertical: 20,
+  },
+  price: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 15,
+    marginBottom: 5,
   },
   ongkir: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 10,
   },
   footer: {
+    flex: 1,
     paddingHorizontal: 30,
     backgroundColor: colors.white,
     shadowColor: '#000',
@@ -107,7 +269,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 6.84,
-    elevation: 11,
-    paddingBottom: 30,
+    elevation: 15,
+    paddingBottom: responsiveHeight(55),
   },
 });

@@ -7,32 +7,72 @@ import {
   responsiveHeight,
   responsiveWidth,
   heightMobileUI,
+  getData,
 } from '../../utils';
-import { dummyProfile, dummyMenu } from '../../data';
+import { menu } from '../../data';
 import { ListMenu } from '../../components';
+import { DefaultPic } from '../../assets';
 
 export default class ProfileScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      profile: dummyProfile,
-      menus: dummyMenu,
+      profile: false,
+      token: false,
+      menus: menu,
     };
   }
+
+  componentDidMount() {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.getUserToken();
+      this.getUserProfile();
+    });
+  }
+
+  componentWillUnmount() {
+    this._unsubscribe();
+  }
+
+  getUserToken = () => {
+    getData('token').then(res => {
+      const token = res;
+
+      if (token) {
+        this.setState({
+          token: token,
+        });
+      } else {
+        this.props.navigation.replace('Login');
+      }
+    });
+  };
+
+  getUserProfile = () => {
+    getData('user').then(res => {
+      const data = res;
+      // console.log('User Profile: ', res);
+      this.setState({
+        profile: data,
+      });
+    });
+  };
 
   render() {
     const { profile, menus } = this.state;
     return (
       <View style={styles.page}>
         <View style={styles.container}>
-          <Image source={profile.avatar} style={styles.pic} />
+          <Image
+            // source={profile.avatar ? { uri: profile.avatar } : DefaultPic}
+            source={DefaultPic}
+            style={styles.pic}
+          />
           <View style={styles.profile}>
             <Text style={styles.name}>{profile.name}</Text>
             <Text style={styles.desc}>Phone : {profile.phone}</Text>
-            <Text style={styles.desc}>
-              {profile.address} {profile.city}
-            </Text>
+            <Text style={styles.desc}>{profile.address}</Text>
           </View>
           <ListMenu menus={menus} navigation={this.props.navigation} />
         </View>
@@ -49,7 +89,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     bottom: 0,
-    height: responsiveHeight(592),
+    height: responsiveHeight(680),
     width: '100%',
     backgroundColor: colors.white,
     borderTopRightRadius: 40,
@@ -58,13 +98,13 @@ const styles = StyleSheet.create({
   pic: {
     width: responsiveWidth(120),
     height: responsiveHeight(123),
-    borderRadius: 50,
+    borderRadius: 25,
     alignSelf: 'center',
-    marginTop: -responsiveWidth(80),
+    marginTop: -responsiveWidth(50),
   },
   profile: {
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 20,
+    marginBottom: 30,
     alignItems: 'center',
   },
   name: {

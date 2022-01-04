@@ -1,44 +1,70 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import { connect } from 'react-redux';
 import {
   Button,
   HeaderComponent,
   ListCategory,
-  ListShirt,
+  ListProduct,
   Distance,
 } from '../../components';
 import { colors, fonts } from '../../utils';
-import { dummyCategory, dummyShirt } from '../../data';
+// import { getListCategory } from '../../actions/CategoryAction';
+import { getListProduct, popularProduct } from '../../actions/ProductAction';
+import { dummyProduct } from '../../data/dummyProduct';
 
 class HomeScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      categories: dummyCategory,
-      shirts: dummyShirt,
+      product_dummy: dummyProduct,
     };
   }
 
+  componentDidMount() {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      // this.props.dispatch(getListCategory());
+      this.props.dispatch(getListProduct());
+    });
+  }
+
+  seeAll = () => {
+    this.props.navigation.navigate('Product');
+  };
+
+  componentWillUnmount() {
+    this._unsubscribe();
+  }
+
   render() {
-    const { categories, shirts } = this.state;
+    const { product_dummy } = this.state;
     const { navigation } = this.props;
     return (
       <View style={styles.page}>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <HeaderComponent navigation={navigation} />
+          <HeaderComponent navigation={navigation} page="Home" />
           <View style={styles.category}>
-            <Text style={styles.label}>Pilih Kategori</Text>
-            <ListCategory categories={categories} />
+            {/* <Text style={styles.label}>Pilih Kategori</Text>
+            <ListCategory navigation={navigation} /> */}
+            {/* <ListCategory /> */}
           </View>
-          <View style={styles.shirt}>
+          <View style={styles.product}>
             <Text style={styles.label}>
-              Pilih <Text style={styles.boldLabel}>Kemeja</Text> Favoritmu
+              Popular <Text style={styles.boldLabel}>Product</Text>
             </Text>
-            <ListShirt shirts={shirts} navigation={navigation} />
-
-            <Button title="Lihat Semua" type="text" padding={7} />
+            <ListProduct
+              navigation={navigation}
+              product_dummy={product_dummy}
+            />
+            <Button
+              title="Lihat Semua"
+              type="text"
+              padding={7}
+              onPress={() => this.seeAll()}
+            />
           </View>
+
           <Distance height={50} />
         </ScrollView>
       </View>
@@ -46,7 +72,7 @@ class HomeScreen extends Component {
   }
 }
 
-export default HomeScreen;
+export default connect()(HomeScreen);
 
 const styles = StyleSheet.create({
   page: {
@@ -57,8 +83,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 30,
     marginTop: 10,
   },
-  shirt: {
-    marginHorizontal: 30,
+  product: {
+    marginHorizontal: 28,
     marginTop: 25,
   },
   label: {

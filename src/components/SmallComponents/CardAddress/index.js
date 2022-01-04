@@ -2,15 +2,15 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colors, fonts } from '../../../utils';
 
-const CardAddress = ({ profile }) => {
+const CardAddress = ({ address, navigation }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Alamat saya: </Text>
-      <Text style={styles.address}>{profile.address}</Text>
-      <Text style={styles.address}>Kota/Kab. {profile.city}</Text>
-      <Text style={styles.address}>Provinsi {profile.province}</Text>
-      <TouchableOpacity>
-        <Text style={styles.editAddress}>Ubah Alamat</Text>
+      <Text style={styles.title}>My Address: </Text>
+      <Text style={styles.address}>{address}</Text>
+      {/* <Text style={styles.address}>Kota/Kab. {city}</Text>
+      <Text style={styles.address}>Provinsi {province}</Text> */}
+      <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}>
+        <Text style={styles.editAddress}>Change Address</Text>
       </TouchableOpacity>
     </View>
   );
@@ -26,10 +26,10 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOpacity: 0.3,
+    shadowRadius: 6.84,
 
-    elevation: 5,
+    elevation: 15,
     padding: 15,
     borderRadius: 10,
     marginTop: 10,
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   },
   editAddress: {
     fontFamily: fonts.primary.bold,
-    fontSize: 14,
+    fontSize: 13,
     color: colors.primary,
     textAlign: 'right',
   },

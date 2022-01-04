@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IconKeranjang, IconBack, IconSubmit } from '../../../assets';
 import { colors } from '../../../utils';
 import ButtonText from './ButtonText';
+import Loading from './Loading';
 import TextIcon from './TextIcon';
 
 const Button = props => {
@@ -19,7 +20,12 @@ const Button = props => {
     // return icon === 'keranjang' ? <IconKeranjang /> : <IconKeranjang />;
   };
 
-  const { icon, totalKeranjang, padding, type, onPress } = props;
+  const { icon, totalCart, padding, type, onPress, loading } = props;
+
+  // Loading
+  if (loading) {
+    return <Loading {...props} />;
+  }
 
   if (type === 'text') {
     return <ButtonText {...props} />;
@@ -30,9 +36,9 @@ const Button = props => {
   return (
     <TouchableOpacity style={styles.container(padding)} onPress={onPress}>
       <Icon />
-      {totalKeranjang && (
+      {totalCart && (
         <View style={styles.notif}>
-          <Text style={styles.textNotif}>{totalKeranjang}</Text>
+          <Text style={styles.textNotif}>{totalCart}</Text>
         </View>
       )}
     </TouchableOpacity>
@@ -57,7 +63,7 @@ const styles = StyleSheet.create({
     padding: 3,
   },
   textNotif: {
-    fontSize: 8,
+    fontSize: 10,
     color: colors.white,
   },
 });

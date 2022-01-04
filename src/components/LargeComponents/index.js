@@ -1,9 +1,9 @@
 import BottomNavigator from './BottomNavigator';
 import HeaderComponent from './HeaderComponent';
 import ListCategory from './ListCategory';
-import ListShirt from './ListShirt';
+import ListProduct from './ListProduct';
 import ListMenu from './ListMenu';
-import ShirtSlider from './ShirtSlider';
+import ProductSlider from './ProductSlider';
 import ListCart from './ListCart';
 import ListHistory from './ListHistory';
 import TabItem from './TabItem';
@@ -12,9 +12,9 @@ export {
   BottomNavigator,
   HeaderComponent,
   ListCategory,
-  ListShirt,
+  ListProduct,
   ListMenu,
-  ShirtSlider,
+  ProductSlider,
   ListCart,
   ListHistory,
   TabItem,

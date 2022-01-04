@@ -4,4 +4,7 @@ export const colors = {
   white: '#ffffff',
   lightCard: '#D9DCF7',
   border: '#C4C4C4',
+  success: '##00CC99',
+  red: '#f5573e',
+  warning: '#fca32a',
 };

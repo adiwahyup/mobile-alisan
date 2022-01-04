@@ -12,8 +12,9 @@ import {
   ChangePassword,
   History,
   Login,
-  Register1,
-  Register2,
+  Register,
+  Payment,
+  Order,
 } from '../pages';
 import { BottomNavigator } from '../components';
 
@@ -79,14 +80,19 @@ const Router = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Register1"
-        component={Register1}
+        name="Register"
+        component={Register}
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Register2"
-        component={Register2}
-        options={{ headerShown: false }}
+        name="Order"
+        component={Order}
+        options={{ title: 'Your Order' }}
+      />
+      <Stack.Screen
+        name="Payment"
+        component={Payment}
+        options={{ title: 'Continue Payment', animationEnabled: false }}
       />
     </Stack.Navigator>
   );

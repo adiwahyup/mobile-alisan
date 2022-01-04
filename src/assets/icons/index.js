@@ -15,6 +15,7 @@ import IconBack from './arrow-left.svg';
 import IconKeranjangPutih from './keranjang-putih.svg';
 import IconHapus from './hapus.svg';
 import IconSubmit from './submit.svg';
+import IconDelete from './delete.svg';
 
 export {
   IconHome,
@@ -34,4 +35,5 @@ export {
   IconKeranjangPutih,
   IconHapus,
   IconSubmit,
+  IconDelete,
 };

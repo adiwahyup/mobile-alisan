@@ -1,4 +1,9 @@
-import { GET_CITY, GET_PROVINCE } from '../../actions/RajaOngkirAction';
+import {
+  GET_CITY,
+  GET_PROVINCE,
+  GET_CITY_DETAIL,
+  SHIPPING_COST,
+} from '../../actions/RajaOngkirAction';
 
 const initialState = {
   getProvinceLoading: false,
@@ -8,6 +13,14 @@ const initialState = {
   getCityLoading: false,
   getCityResult: false,
   getCityError: false,
+
+  getCityDetailLoading: false,
+  getCityDetailResult: false,
+  getCityDetailError: false,
+
+  costLoading: false,
+  costResult: false,
+  costError: false,
 };
 
 export default function (state = initialState, action) {
@@ -25,6 +38,20 @@ export default function (state = initialState, action) {
         getCityLoading: action.payload.loading,
         getCityResult: action.payload.data,
         getCityError: action.payload.errorMessage,
+      };
+    case GET_CITY_DETAIL:
+      return {
+        ...state,
+        getCityDetailLoading: action.payload.loading,
+        getCityDetailResult: action.payload.data,
+        getCityDetailError: action.payload.errorMessage,
+      };
+    case SHIPPING_COST:
+      return {
+        ...state,
+        costLoading: action.payload.loading,
+        costResult: action.payload.data,
+        costError: action.payload.errorMessage,
       };
     default:
       return state;

@@ -1,3 +1,3 @@
-import ProfilePic from './bl.jpg';
+import DefaultPic from './default.jpg';
 
-export { ProfilePic };
+export { DefaultPic };

@@ -1,4 +1,4 @@
-package com.shop;
+package com.mobilealisan;
 
 import com.facebook.react.ReactActivity;
 
@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "shop-alisan";
+    return "mobile-alisan";
   }
 }
