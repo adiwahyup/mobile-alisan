@@ -1,7 +1,8 @@
 # OSX
 #
 .DS_Store
-
+.vscode
+_tests_
 # Xcode
 #
 build/
