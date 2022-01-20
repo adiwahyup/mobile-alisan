@@ -9,12 +9,12 @@ import {
   Cart,
   Checkout,
   EditProfile,
-  ChangePassword,
   History,
   Login,
   Register,
   Payment,
   Order,
+  YourOrder,
 } from '../pages';
 import { BottomNavigator } from '../components';
 
@@ -58,16 +58,15 @@ const Router = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen name="Cart" component={Cart} />
-      <Stack.Screen name="Checkout" component={Checkout} />
+      <Stack.Screen
+        name="Checkout"
+        component={Checkout}
+        options={{ title: 'Cart' }}
+      />
       <Stack.Screen
         name="EditProfile"
         component={EditProfile}
         options={{ title: 'Edit Profile' }}
-      />
-      <Stack.Screen
-        name="ChangePassword"
-        component={ChangePassword}
-        options={{ title: 'Change Password' }}
       />
       <Stack.Screen
         name="History"
@@ -87,12 +86,17 @@ const Router = () => {
       <Stack.Screen
         name="Order"
         component={Order}
-        options={{ title: 'Your Order' }}
+        options={{ title: 'Checkout' }}
       />
       <Stack.Screen
         name="Payment"
         component={Payment}
-        options={{ title: 'Continue Payment', animationEnabled: false }}
+        options={{ title: 'Payment' }}
+      />
+      <Stack.Screen
+        name="YourOrder"
+        component={YourOrder}
+        options={{ title: 'Your Order' }}
       />
     </Stack.Navigator>
   );

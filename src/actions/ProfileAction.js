@@ -1,33 +1,39 @@
 import axios from 'axios';
-import { API_URL, saveData } from '../utils';
+import { API_TIMEOUT, API_URL, saveData } from '../utils';
 import { dispatchLoading, dispatchSuccess, dispatchError } from '../utils';
 
-const UPDATE_PROFILE = 'UPDATE_PROFILE';
+export const UPDATE_PROFILE = 'UPDATE_PROFILE';
 const CHANGE_PASSWORD = 'CHANGE_PASSWORD';
 
 export const updateProfile = data => {
+  console.log(data);
   return dispatch => {
     // LOADING
     dispatchLoading(dispatch, UPDATE_PROFILE);
 
-    const newData = {
+    const newProfile = {
       name: data.name,
       email: data.email,
       phone: data.phone,
       address: data.address,
+      password: data.password,
     };
 
-    return axios
-      .put(`${API_URL.url}/userProfile`, data)
+    axios({
+      method: 'post',
+      url: `${API_URL.url}/editprofile/` + data.id,
+      timeout: API_TIMEOUT,
+      data: newProfile,
+    })
       .then(response => {
         console.log(response.data);
         // SUCCESS
         dispatchSuccess(
           dispatch,
           UPDATE_PROFILE,
-          response.data.user ? response : [],
+          response.data ? response : [],
         );
-        saveData('user', newData);
+        saveData('user', newProfile);
       })
       .catch(error => {
         // ERROR

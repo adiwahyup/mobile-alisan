@@ -5,3 +5,4 @@ export * from './fonts';
 export * from './localStorage';
 export * from './dispatch';
 export * from './discount';
+export * from './date';

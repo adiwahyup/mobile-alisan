@@ -1,16 +1,18 @@
 import {
   GET_LIST_PRODUCT,
+  GET_LIMIT_PRODUCT,
   GET_DETAIL_PRODUCT,
   GET_SSP,
-  GET_LIST_PRODUCT_BY_CATEGORY,
-  SAVE_KEYWORD_PRODUCT,
-  DELETE_PARAMS_PRODUCT,
 } from '../../actions/ProductAction';
 
 const initialState = {
   getListProductLoading: false,
   getListProductResult: false,
   getListProductError: false,
+
+  getLimitProductLoading: false,
+  getLimitProductResult: false,
+  getLimitProductError: false,
 
   getDetailProductLoading: false,
   getDetailProductResult: false,
@@ -19,10 +21,6 @@ const initialState = {
   getSspLoading: false,
   getSspResult: false,
   getSspError: false,
-
-  category_id: false,
-  categoryName: false,
-  keyword: false,
 };
 
 export default function (state = initialState, action) {
@@ -33,6 +31,13 @@ export default function (state = initialState, action) {
         getListProductLoading: action.payload.loading,
         getListProductResult: action.payload.data,
         getListProductError: action.payload.errorMessage,
+      };
+    case GET_LIMIT_PRODUCT:
+      return {
+        ...state,
+        getLimitProductLoading: action.payload.loading,
+        getLimitProductResult: action.payload.data,
+        getLimitProductError: action.payload.errorMessage,
       };
     case GET_DETAIL_PRODUCT:
       return {
@@ -47,24 +52,6 @@ export default function (state = initialState, action) {
         getSspLoading: action.payload.loading,
         getSspResult: action.payload.data,
         getSspError: action.payload.errorMessage,
-      };
-    case GET_LIST_PRODUCT_BY_CATEGORY:
-      return {
-        ...state,
-        category_id: action.payload.category_id,
-        categoryName: action.payload.categoryName,
-      };
-    case DELETE_PARAMS_PRODUCT:
-      return {
-        ...state,
-        category_id: false,
-        categoryName: false,
-        keyword: false,
-      };
-    case SAVE_KEYWORD_PRODUCT:
-      return {
-        ...state,
-        keyword: action.payload.data,
       };
     default:
       return state;

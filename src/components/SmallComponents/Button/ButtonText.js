@@ -2,10 +2,22 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { colors, fonts } from '../../../utils';
 
-const ButtonText = ({ padding, title, onPress, fontSize }) => {
+const ButtonText = ({
+  padding,
+  title,
+  onPress,
+  fontSize,
+  borderRadius,
+  backgroundColor,
+  color,
+  disabled,
+}) => {
   return (
-    <TouchableOpacity style={styles.container(padding)} onPress={onPress}>
-      <Text style={styles.text(fontSize)}>{title}</Text>
+    <TouchableOpacity
+      disabled={disabled}
+      style={styles.container(padding, borderRadius, backgroundColor)}
+      onPress={onPress}>
+      <Text style={styles.text(fontSize, color)}>{title}</Text>
     </TouchableOpacity>
   );
 };
@@ -13,15 +25,15 @@ const ButtonText = ({ padding, title, onPress, fontSize }) => {
 export default ButtonText;
 
 const styles = StyleSheet.create({
-  container: padding => ({
-    backgroundColor: colors.primary,
+  container: (padding, borderRadius, backgroundColor) => ({
+    backgroundColor: backgroundColor ? backgroundColor : colors.primary,
     padding: padding,
-    borderRadius: 10,
+    borderRadius: borderRadius ? borderRadius : 25,
   }),
-  text: fontSize => ({
-    color: colors.white,
+  text: (fontSize, color) => ({
+    color: color ? color : colors.white,
     textAlign: 'center',
-    fontSize: fontSize ? fontSize : 13,
+    fontSize: fontSize ? fontSize : 18,
     fontFamily: fonts.primary.bold,
   }),
 });

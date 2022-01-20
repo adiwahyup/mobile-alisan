@@ -1,104 +1,64 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Alert,
-  TouchableOpacity,
-} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import { connect } from 'react-redux';
+import { yourOrder } from '../../../actions/HistoryAction';
 import {
   colors,
   responsiveHeight,
-  responsiveWidth,
   numberFormat,
   fonts,
+  dateFormat,
 } from '../../../utils';
 import Distance from '../Distance';
-import { updateStatus } from '../../../actions/HistoryAction';
 
 class CardHistory extends Component {
-  componentDidMount() {
-    const { order } = this.props;
-    // this.props.dispatch(updateStatus(order.order_id));
-  }
-  payNow = () => {
-    const { order } = this.props;
-    if (order.status === 'paid') {
-      Alert.alert('Info', 'You have paid for this order');
-    } else {
-      this.props.navigation.navigate('Payment', {
-        order_redirect_url: order.order_redirect_url,
-      });
-    }
+  getDetail = () => {
+    const { token, order } = this.props;
+    let data = {
+      token: token,
+      order_id: order.order_id,
+    };
+    this.props.dispatch(yourOrder(data));
+    this.props.navigation.navigate('YourOrder');
   };
+
   render() {
-    const { order, updateStatusLoading } = this.props;
-    console.log('Order', order);
+    const { order } = this.props;
+    const tanggal = order.order_purchase;
+    const id = order.order_id;
 
-    const history = order.orders;
     return (
-      <TouchableOpacity style={styles.container} onPress={() => this.payNow()}>
-        <Text style={styles.date}>{order.date}</Text>
-        {Object.keys(history).map((key, index) => {
-          return (
-            <View key={index} style={styles.history}>
-              <Text style={styles.textBold}>{index + 1}.</Text>
-              <Image
-                source={{ uri: history[key].product.product_picture[0] }}
-                style={styles.product}
-              />
-              <View style={styles.desc}>
-                <Text style={styles.name}>
-                  {history[key].product.product_name}
-                </Text>
-                <Text style={styles.price}>
-                  Rp {numberFormat(history[key].product.product_price)}
-                </Text>
+      <View style={styles.wrapButton}>
+        <Distance height={responsiveHeight(20)} />
 
-                <Distance height={3} />
-
-                <Text style={styles.textBold}>
-                  Quantity : {history[key].qty}
-                </Text>
-                <Text style={styles.textBold}>
-                  Total Price : Rp {numberFormat(history[key].totalPrice)}
-                </Text>
-              </View>
+        <TouchableOpacity
+          key={order.order_id}
+          style={styles.container}
+          onPress={this.getDetail}>
+          <View style={styles.history}>
+            <View style={styles.wrapHeader}>
+              <Text style={styles.textBold}>Tanggal Order :</Text>
+              <Text style={styles.textBold}>Total Order :</Text>
+              <Text style={styles.textBold}>Status Order :</Text>
             </View>
-          );
-        })}
-
-        <Distance height={10} />
-        <View style={styles.footer}>
-          <View style={styles.label}>
-            <Text style={styles.textBlueLeft}>Status :</Text>
-            <Text style={styles.textBlueLeft}>
-              Estimation ({order.order_estimation}) days :
-            </Text>
-            <Text style={styles.textBlueLeft}>Total Price :</Text>
+            <View style={styles.wrapFill}>
+              <Text style={styles.textBlue}>{dateFormat(tanggal)}</Text>
+              <Text style={styles.textBlue}>
+                Rp {numberFormat(order.order_total)}
+              </Text>
+              <Text style={styles.textBlue}>{order.order_status}</Text>
+            </View>
           </View>
-
-          <View style={styles.label}>
-            <Text style={styles.textBlueRight}>
-              {updateStatusLoading ? 'Loading' : order.order_status}
-            </Text>
-            <Text style={styles.textBlueRight}>
-              {numberFormat(order.order_shipping_cost)}
-            </Text>
-            <Text style={styles.textBlueRight}>
-              Rp {numberFormat(order.totalPrice + order.order_shipping_cost)}
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </View>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  updateStatusLoading: state.HistoryReducer.updateStatusLoading,
+  showByUserIdLoading: state.HistoryReducer.showByUserIdLoading,
+  showByUserIdResult: state.HistoryReducer.showByUserIdResult,
+  showByUserIdError: state.HistoryReducer.showByUserIdError,
 });
 
 export default connect(mapStateToProps, null)(CardHistory);
@@ -114,19 +74,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 10,
-    padding: 10,
-    borderRadius: 15,
-    marginTop: -15,
-    marginBottom: 30,
+    padding: 20,
+    borderRadius: 10,
+    marginTop: -10,
+    marginVertical: 20,
   },
-  history: {
-    flexDirection: 'row',
-    marginTop: 8,
-    marginHorizontal: 5,
-  },
-  product: {
-    width: responsiveWidth(66),
-    height: responsiveHeight(66),
+  wrapButton: {
+    // paddingTop: -50,
   },
   date: {
     fontSize: 14,
@@ -135,37 +89,22 @@ const styles = StyleSheet.create({
   textBold: {
     fontSize: 13,
     fontFamily: fonts.primary.bold,
+    textTransform: 'uppercase',
+    color: colors.black,
+    // textAlign: 'left',
+    // textAlign: 'center',
   },
-  desc: {
-    marginLeft: responsiveWidth(6),
-  },
-  name: {
-    fontSize: 13,
+  textBlue: {
+    fontSize: 14,
     fontFamily: fonts.primary.bold,
-    width: responsiveWidth(250),
+    color: colors.primary,
+    textTransform: 'uppercase',
+    alignItems: 'center',
   },
-  price: {
-    fontSize: 13,
-    fontFamily: fonts.primary.reguler,
-  },
-  footer: {
+  history: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  label: {
-    flex: 1,
-  },
-  textBlueRight: {
-    fontSize: 12,
-    fontFamily: fonts.primary.bold,
-    color: colors.primary,
-    textTransform: 'uppercase',
-    textAlign: 'right',
-  },
-  textBlueLeft: {
-    fontSize: 12,
-    fontFamily: fonts.primary.bold,
-    color: colors.primary,
-    textTransform: 'uppercase',
-    textAlign: 'left',
-  },
+  wrapHeader: {},
+  wrapFill: {},
 });

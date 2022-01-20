@@ -20,9 +20,9 @@ const Size = ({
           selectedValue={selectedValue}
           style={styles.picker(width, height, fontSize)}
           onValueChange={onValueChange}>
-          <Picker.Item label="--Choose--" value="" />
+          <Picker.Item label="--Pilih--" value="" />
           {Object.keys(datas).map((key, index) => {
-            if (label === 'Size') {
+            if (label === 'Ukuran') {
               return (
                 <Picker.Item
                   label={datas[key].ssp_size}
@@ -31,7 +31,7 @@ const Size = ({
                 />
               );
             } else {
-              // return <Picker.Item label={item} value={item} key={index} />;
+              return <Picker.Item label={key} value={key} key={index} />;
             }
           })}
         </Picker>
@@ -45,14 +45,6 @@ export default Size;
 const styles = StyleSheet.create({
   container: {
     marginTop: 5,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 6.84,
-    elevation: 5,
   },
   label: fontSize => ({
     fontSize: fontSize ? fontSize : 18,
@@ -63,11 +55,12 @@ const styles = StyleSheet.create({
     fontFamily: fonts.primary.reguler,
     width: width,
     height: height ? height : responsiveHeight(42),
-    marginTop: -10,
-    marginBottom: 10,
+    marginTop: -3,
+    marginBottom: 3,
+    color: colors.black,
   }),
   wrapPicker: {
-    borderWidth: 1,
+    borderWidth: 1.3,
     borderRadius: 15,
     borderColor: colors.border,
   },

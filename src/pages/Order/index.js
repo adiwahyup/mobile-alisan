@@ -26,11 +26,13 @@ export class Order extends Component {
       totalPrice: this.props.route.params.subTotal,
       totalWeight: this.props.route.params.totalWeight,
       productCart: this.props.route.params.cart,
+      coupondiscount: this.props.route.params.coupondiscount,
     };
   }
 
   Payment = () => {
     const { postOrderResult } = this.props;
+
     const params = {
       order_id: postOrderResult.orderid.order_id,
       user_id: postOrderResult.orderid.user_id,
@@ -41,33 +43,27 @@ export class Order extends Component {
   };
 
   render() {
-    const { shippingCost, productCart, totalPrice } = this.state;
-
+    const { shippingCost, productCart, totalPrice, coupondiscount } =
+      this.state;
     const { postOrderLoading } = this.props;
+    const total = totalPrice + shippingCost;
+    const couponvalue = (total * coupondiscount) / 100;
+    console.log(couponvalue);
 
     return (
       <View style={styles.page}>
-        <View style={styles.wrapLine}>
-          <View style={styles.line} />
-        </View>
-        <Text style={styles.title}>Review your order</Text>
-        <View styles={styles.review}>
-          <View style={styles.wrapLine}>
-            <View style={styles.line} />
-          </View>
-        </View>
         <ScrollView style={styles.fill}>
           {Object.keys(productCart).map((key, index) => {
             const imgSplit = productCart[key].product_picture.split(', ')[0];
-
             const img =
               imgSplit === 'id1-back.jpg'
                 ? require('../../assets/product/id1-back.jpg')
-                : require('../../assets/product/id2-back.jpg');
+                : 'id2-back.jpg'
+                ? require('../../assets/product/id2-back.jpg')
+                : null;
 
             return (
               <View key={index} style={styles.cardProduct}>
-                <Text style={styles.text}>{index + 1}.</Text>
                 <View style={styles.desc}>
                   <View style={styles.imagev}>
                     <Image style={styles.image} source={img} />
@@ -94,8 +90,7 @@ export class Order extends Component {
                 <Distance height={10} />
                 <View style={styles.footerCard}>
                   <View style={styles.label}>
-                    <Text style={styles.textBlueLeft}>Quantity:</Text>
-                    {/* <Text style={styles.textBlueLeft}>Shipping Cost:</Text> */}
+                    <Text style={styles.textBlueLeft}>Jumlah:</Text>
                     <Text style={styles.textBlueLeft}>Subtotal :</Text>
                   </View>
 
@@ -124,23 +119,32 @@ export class Order extends Component {
 
         <View style={styles.footer}>
           <View style={styles.shipping}>
-            <Text style={styles.text}>Shipping Cost : </Text>
+            <Text style={styles.text}>Biaya Kirim</Text>
             <Text style={styles.text}>Rp. {numberFormat(shippingCost)}</Text>
           </View>
+          {coupondiscount ? (
+            <View style={styles.coupon}>
+              <Text style={styles.text}>Diskon Kupon</Text>
+              <Text style={styles.textCoupon}>
+                Rp. -{numberFormat(couponvalue)}
+              </Text>
+            </View>
+          ) : (
+            <View />
+          )}
           <View style={styles.total}>
-            <Text style={styles.textBold}>Total Price : </Text>
+            <Text style={styles.textBold}>Total Order</Text>
             <Text style={styles.textBold}>
               Rp
-              {totalPrice ? numberFormat(totalPrice + shippingCost) : 0}
+              {numberFormat(discount(total, coupondiscount))}
             </Text>
           </View>
 
           <Button
-            title="Proceed to Payment"
-            type="textIcon"
+            title="Lanjutkan Pembayaran"
+            type="text"
             fontSize={18}
             padding={responsiveHeight(15)}
-            icon="keranjang-putih"
             disable={true}
             onPress={() => this.Payment()}
             loading={postOrderLoading}
@@ -154,6 +158,9 @@ export class Order extends Component {
 const mapStateToProps = state => ({
   postOrderLoading: state.OrderReducer.updateOrderLoading,
   postOrderResult: state.OrderReducer.postOrderResult,
+
+  getListCartLoading: state.CartReducer.getListCartLoading,
+  getListCartResult: state.CartReducer.getListCartResult,
 });
 export default connect(mapStateToProps, null)(Order);
 
@@ -173,14 +180,6 @@ const styles = StyleSheet.create({
   imagev: {
     alignItems: 'center',
     height: responsiveHeight(155),
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 22,
-    fontFamily: fonts.primary.bold,
-    color: colors.primary,
-    marginTop: responsiveHeight(10),
-    marginBottom: responsiveHeight(10),
   },
   cardProduct: {
     paddingHorizontal: 20,
@@ -214,6 +213,12 @@ const styles = StyleSheet.create({
   textBold: {
     fontSize: 18,
     fontFamily: fonts.primary.bold,
+    color: colors.black,
+  },
+  textCoupon: {
+    fontSize: 16,
+    fontFamily: fonts.primary.bold,
+    color: colors.red,
   },
   desc: {
     marginHorizontal: 30,
@@ -249,7 +254,6 @@ const styles = StyleSheet.create({
     shadowRadius: 6.84,
     elevation: 15,
     paddingBottom: 25,
-    // paddingTop: 10,
   },
   label: {
     flex: 1,
@@ -274,6 +278,10 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
   },
   shipping: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  coupon: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

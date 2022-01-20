@@ -1,5 +1,14 @@
+import { getData } from '../localStorage';
+import axios from 'axios';
+
 export const heightMobileUI = 896;
 export const widthMobileUI = 414;
+
+getData('token')
+  .then(res => {})
+  .catch(error => {
+    error;
+  });
 
 // API LARAVEL
 export const API_URL = {
@@ -7,7 +16,9 @@ export const API_URL = {
 };
 
 // RAJAONOGKIR
-export const API_KEY = 'f187e9d1fbdc1195cb80c173951baaba';
+// export const API_KEY = 'f187e9d1fbdc1195cb80c173951baaba';
+export const API_KEY = '2757ff46782c0917e92a1a444042f2ee';
+
 export const API_RAJAONGKIR = 'https://api.rajaongkir.com/starter/';
 export const API_HEADER_RAJAONGKIR = {
   key: API_KEY,
@@ -28,5 +39,5 @@ export const URL_MIDTRANS_STATUS = 'https://app.sandbox.midtrans.com/v2/';
 export const HEADER_MIDTRANS = {
   Accept: 'application/json',
   'Content-Type': 'application/json',
-  Authorization: 'Basic ',
+  Authorization: 'Basic U0ItTWlkLXNlcnZlci1KaFJQRUhSLTBkNFNtRDdfNU5INzFXcFk=',
 };

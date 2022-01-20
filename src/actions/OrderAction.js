@@ -30,11 +30,10 @@ export const updateCart = params => {
 };
 
 export const postOrder = data => {
-  console.log('test data masuk post order: ', data);
   return dispatch => {
     dispatchLoading(dispatch, POST_ORDER);
 
-    const cart = data.productCart.map(item => {
+    const cart = data.cart.map(item => {
       return {
         product_id: item.product_id,
         product_name: item.product_name,
@@ -46,9 +45,13 @@ export const postOrder = data => {
         qty: item.qty,
       };
     });
+    console.log('log var cart', cart);
 
     const req = {
       address: data.address,
+      couponid: data.couponid,
+      couponvalue: data.couponvalue,
+      coupondiscount: data.coupondiscount,
       totalOrder: data.subTotal,
       total_weight: data.totalWeight,
       province: data.city.province,
@@ -59,8 +62,10 @@ export const postOrder = data => {
       package: data.service,
       shipping_costs: data.shippingCost,
       estimation: data.estimation,
-      // subprice: data.subTotal,
+      subprice: data.subTotal,
     };
+    console.log('log var cart', req);
+
     const user_id = data.user_id;
 
     const item = {
@@ -68,10 +73,20 @@ export const postOrder = data => {
       request: req,
       user_id: user_id,
     };
+    const token = data.token;
+    console.log('var token post order');
+    console.log('token post checkout', token);
     const headers = {
-      Accept: 'application/json',
       'Content-Type': 'application/json',
+      Authorization: token,
     };
+    console.log('Token header', token);
+
+    // const config = {
+    //   headers: {
+    //     Authorization: 'Bearer ' + token,
+    //   },
+    // };
 
     axios({
       method: 'POST',
@@ -80,11 +95,12 @@ export const postOrder = data => {
       data: item,
     })
       .then(response => {
-        console.log('response api', response.data);
+        console.log('response post checkout', response.data);
         let order = response.data;
         dispatchSuccess(dispatch, POST_ORDER, order);
       })
       .catch(error => {
+        console.log('post order', error.response);
         dispatchError(dispatch, POST_ORDER, error);
         alert(error);
       });

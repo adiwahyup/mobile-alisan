@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, Image, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
-import { colors, fonts, responsiveWidth, numberFormat } from '../../../utils';
+import {
+  colors,
+  fonts,
+  responsiveWidth,
+  numberFormat,
+  responsiveHeight,
+} from '../../../utils';
 import Button from '../Button';
 
 class CardProduct extends Component {
-  // componentDidMount() {
-  // this.props.dispatch(getDetailProduct(this.props.product.product_slug));
-  // }
-
   mix = () => {
     const { product, product_dummy, navigation } = this.props;
 
@@ -45,10 +47,6 @@ class CardProduct extends Component {
   }
 }
 
-// const mapStateToProps = state => ({
-//   getSspResult: state.ProductReducer.getSspResult,
-// });
-
 export default connect()(CardProduct);
 
 const styles = StyleSheet.create({
@@ -57,26 +55,27 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.lightCard,
-    width: responsiveWidth(155),
+    width: responsiveWidth(160),
     alignItems: 'center',
     padding: 12,
     borderRadius: 30,
     marginBottom: 12,
   },
   gambar: {
-    width: 130,
-    height: 130,
+    width: responsiveHeight(130),
+    height: responsiveWidth(130),
   },
   text: {
     fontFamily: fonts.primary.bold,
-    fontSize: 13,
+    fontSize: 14,
     textTransform: 'capitalize',
     textAlign: 'center',
+    color: colors.black,
   },
   price: {
     textDecorationLine: 'line-through',
     textDecorationStyle: 'solid',
-    fontFamily: fonts.primary.reguler,
+    fontFamily: fonts.primary.bold,
     fontSize: 12,
     textAlign: 'center',
     color: colors.red,

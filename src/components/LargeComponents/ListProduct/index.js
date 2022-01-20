@@ -1,7 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { connect } from 'react-redux';
-import { getDetailProduct } from '../../../actions/ProductAction';
 import { colors } from '../../../utils';
 import { CardProduct } from '../../SmallComponents';
 

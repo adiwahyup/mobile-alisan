@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { Button, Distance, Input } from '../../components';
-import { colors, fonts } from '../../utils';
+import { colors, fonts, responsiveHeight } from '../../utils';
 import { loginUser } from '../../actions/AuthAction';
 
 class Login extends Component {
@@ -23,7 +23,7 @@ class Login extends Component {
       };
       this.props.dispatch(loginUser(data));
     } else {
-      alert('Email & Password harus diisi');
+      Alert.alert('Info', 'Email dan Password harus diisi');
     }
   };
 
@@ -40,6 +40,10 @@ class Login extends Component {
     const { loginLoading } = this.props;
     return (
       <View style={styles.page}>
+        <View style={styles.signin}>
+          <Text style={styles.title}>Login</Text>
+        </View>
+        <Distance height={responsiveHeight(70)} />
         <View style={styles.cardLogin}>
           <Input
             label="Email"
@@ -63,15 +67,19 @@ class Login extends Component {
             onPress={() => this.login()}
           />
         </View>
-
         <View style={styles.register}>
-          <Text style={styles.textBlue}>Don't have an Account?</Text>
           <Text
             style={styles.textBlue}
             onPress={() => this.props.navigation.navigate('Register')}>
-            Signup now
+            Belum Punya Akun?
+          </Text>
+          <Text
+            style={styles.textBlue}
+            onPress={() => this.props.navigation.navigate('Register')}>
+            Daftar Disini
           </Text>
         </View>
+        <Distance height={50} />
       </View>
     );
   }
@@ -115,5 +123,14 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontFamily: fonts.primary.bold,
     color: colors.primary,
+  },
+  signin: {
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontFamily: fonts.primary.light,
+    color: colors.primary,
+    textTransform: 'uppercase',
   },
 });

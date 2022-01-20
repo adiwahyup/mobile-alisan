@@ -8,6 +8,7 @@ import {
   responsiveHeight,
   responsiveWidth,
   numberFormat,
+  discount,
 } from '../../../utils';
 import Distance from '../Distance';
 
@@ -18,7 +19,9 @@ const CardCart = ({ cart, mainCart, id, product, dispatch }) => {
   const img =
     split === 'id1-back.jpg'
       ? require('../../../assets/product/id1-back.jpg')
-      : require('../../../assets/product/id2-back.jpg');
+      : 'id2-back.jpg'
+      ? require('../../../assets/product/id2-back.jpg')
+      : null;
 
   const hapusCart = () => {
     dispatch(deleteCart(id, mainCart, cart));
@@ -29,16 +32,16 @@ const CardCart = ({ cart, mainCart, id, product, dispatch }) => {
       <Image style={styles.image} source={img} />
       <View style={styles.desc}>
         <Text style={styles.name}>{cart.product_name}</Text>
-        <Text style={styles.text}>Rp {numberFormat(cart.product_price)}</Text>
+        <Text style={styles.text}>
+          Rp {numberFormat(discount(cart.product_price, cart.product_discount))}
+        </Text>
         <Distance height={responsiveHeight(14)} />
 
         <Text style={styles.textBold}>Quantity: {cart.qty}</Text>
         <Text style={styles.textBold}>Size: {cart.product_size}</Text>
         <Text style={styles.textBold}>
-          Total Price: Rp {numberFormat(cart.totalPrice)}
+          Total Harga: Rp {numberFormat(cart.totalPrice)}
         </Text>
-        {/* <Text style={styles.textBold}>Catatan:</Text> */}
-        {/* <Text style={styles.textBold}>{cart.notes}</Text> */}
       </View>
       <TouchableOpacity style={styles.delete} onPress={() => hapusCart()}>
         <IconDelete />
@@ -71,23 +74,25 @@ const styles = StyleSheet.create({
   image: {
     width: responsiveWidth(88),
     height: responsiveHeight(135),
-    // resizeMode: 'contain',
   },
   delete: {
     flex: 1,
     alignItems: 'flex-end',
   },
   name: {
-    fontFamily: fonts.primary.bold,
+    fontFamily: fonts.primary.black,
     fontSize: 16,
     width: responsiveWidth(250),
+    color: colors.black,
   },
   text: {
     fontFamily: fonts.primary.reguler,
     fontSize: 13,
+    color: colors.black,
   },
   textBold: {
-    fontFamily: fonts.primary.bold,
+    fontFamily: fonts.primary.black,
     fontSize: 11,
+    color: colors.black,
   },
 });

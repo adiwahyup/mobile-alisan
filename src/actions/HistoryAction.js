@@ -1,74 +1,90 @@
 import axios from 'axios';
-import Firebase from '../config/Firebase';
+import { Alert } from 'react-native';
 import {
   dispatchLoading,
   dispatchSuccess,
   dispatchError,
-  URL_MIDTRANS_STATUS,
-  HEADER_MIDTRANS,
-  API_TIMEOUT,
   API_URL,
 } from '../utils';
 
-export const ORDER_HISTORY = 'ORDER_HISTORY';
-export const UPDATE_STATUS = 'UPDATE_STATUS';
+export const SHOW_BY_USER_ID = 'SHOW_BY_USER_ID';
+export const USER_ORDER = 'USER_ORDER';
+export const ORDER_DETAIL = 'ORDER_DETAIL';
+export const COUPON_ORDER = 'COUPON_ORDER';
 
-export const orderHistory = id => {
+export const showByUserId = data => {
   return dispatch => {
-    dispatchLoading(dispatch, ORDER_HISTORY);
-
-    Firebase.database()
-      .ref('history')
-      .orderByChild('user')
-      .equalTo(id)
-      .once('value', querySnapshot => {
-        let data = querySnapshot.val();
-        dispatchSuccess(dispatch, ORDER_HISTORY, data);
-        // console.log('order hisotry action', data);
+    dispatchLoading(dispatch, SHOW_BY_USER_ID);
+    const token = data.token;
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: token,
+    };
+    axios({
+      method: 'GET',
+      url: `${API_URL.url}/order/showbyuserid/` + data.user_id,
+      headers: headers,
+    })
+      .then(response => {
+        let order = response.data;
+        console.log('show by user id', order);
+        dispatchSuccess(dispatch, SHOW_BY_USER_ID, order);
       })
       .catch(error => {
-        dispatchError(dispatch, ORDER_HISTORY, error);
-        alert(error);
+        if (error.response.status === 400 || 401) {
+          // Alert.alert('Anda harus login kembali');
+        }
+        // console.log('Error ShowOrderByUserId', error.response.status);
+        dispatchError(dispatch, SHOW_BY_USER_ID, error);
+        // alert(error);
       });
   };
 };
 
-export const updateStatus = order_id => {
-  return dispatch => {
-    dispatchLoading(dispatch, UPDATE_STATUS);
+export const yourOrder = data => {
+  return async dispatch => {
+    dispatchLoading(dispatch, USER_ORDER);
+    const token = data.token;
+    const order_id = data.order_id;
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: token,
+    };
 
     axios({
       method: 'GET',
-      url: URL_MIDTRANS_STATUS + `${order_id}/status`,
-      headers: HEADER_MIDTRANS,
-      timeout: API_TIMEOUT,
+      url: `${API_URL.url}/user/order/show/` + order_id,
+      headers: headers,
     })
-      .then(response => {
-        const status =
-          response.data.transaction_status === 'settlement' ||
-          response.data.transaction_status === 'capture'
-            ? 'paid'
-            : response.data.transaction_status
-            ? response.data.transaction_status
-            : 'pending';
-
-        // Update history in db
-        axios
-          .put(`${API_URL.url}/order`, {
-            data: { order_id: { order_status: status } },
+      .then(resOrder => {
+        dispatchLoading(dispatch, ORDER_DETAIL);
+        return axios({
+          method: 'GET',
+          url: `${API_URL.url}/order/detail/show/` + order_id,
+          headers: headers,
+        })
+          .then(resDetail => {
+            // return axios({
+            //   method: 'GET',
+            //   url: `${API_URL.url}/coupon`,
+            // }).then(resCoupon => {
+            let userOrder = resOrder.data[1];
+            console.log('action', userOrder);
+            dispatchSuccess(dispatch, USER_ORDER, userOrder);
+            console.log('ini order detal', resDetail.data);
+            let orderDetail = resDetail.data;
+            dispatchSuccess(dispatch, ORDER_DETAIL, orderDetail);
+            // });
           })
-          .then(response => {
-            // SUCCESS
-            dispatchSuccess(dispatch, UPDATE_STATUS, response ? response : []);
-          })
-          .catch(error => {
-            dispatchError(dispatch, UPDATE_STATUS, error);
-            alert(error);
+          .catch(err => {
+            dispatchError(dispatch, ORDER_DETAIL, err);
+            Alert.alert('Error Order Detail', err.response);
           });
       })
       .catch(error => {
-        dispatchError(dispatch, UPDATE_STATUS, error);
-        alert(error);
+        console.log('Error Your Order', error.response);
+        dispatchError(dispatch, USER_ORDER, error);
+        Alert.alert('Error Your Order', error.response);
       });
   };
 };

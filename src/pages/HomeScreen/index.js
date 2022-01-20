@@ -4,13 +4,11 @@ import { connect } from 'react-redux';
 import {
   Button,
   HeaderComponent,
-  ListCategory,
   ListProduct,
   Distance,
 } from '../../components';
 import { colors, fonts } from '../../utils';
-// import { getListCategory } from '../../actions/CategoryAction';
-import { getListProduct, popularProduct } from '../../actions/ProductAction';
+import { getLimitProduct } from '../../actions/ProductAction';
 import { dummyProduct } from '../../data/dummyProduct';
 
 class HomeScreen extends Component {
@@ -24,8 +22,7 @@ class HomeScreen extends Component {
 
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      // this.props.dispatch(getListCategory());
-      this.props.dispatch(getListProduct());
+      this.props.dispatch(getLimitProduct());
     });
   }
 
@@ -43,22 +40,14 @@ class HomeScreen extends Component {
     return (
       <View style={styles.page}>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <HeaderComponent navigation={navigation} page="Home" />
-          <View style={styles.category}>
-            {/* <Text style={styles.label}>Pilih Kategori</Text>
-            <ListCategory navigation={navigation} /> */}
-            {/* <ListCategory /> */}
-          </View>
+          <HeaderComponent navigation={navigation} />
           <View style={styles.product}>
-            <Text style={styles.label}>
-              Popular <Text style={styles.boldLabel}>Product</Text>
-            </Text>
             <ListProduct
               navigation={navigation}
               product_dummy={product_dummy}
             />
             <Button
-              title="Lihat Semua"
+              title="Explore"
               type="text"
               padding={7}
               onPress={() => this.seeAll()}
@@ -78,10 +67,6 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
     backgroundColor: colors.white,
-  },
-  category: {
-    marginHorizontal: 30,
-    marginTop: 10,
   },
   product: {
     marginHorizontal: 28,

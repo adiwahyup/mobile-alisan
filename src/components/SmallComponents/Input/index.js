@@ -36,6 +36,7 @@ const Input = ({
       <TextInput
         style={styles.input(width, height, fontSize)}
         value={value}
+        placeholder={placeholder}
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
         onChangeText={onChangeText}

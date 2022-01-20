@@ -25,10 +25,9 @@ export default class ProfileScreen extends Component {
   }
 
   componentDidMount() {
-    this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.getUserToken();
-      this.getUserProfile();
-    });
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {});
+    this.getUserProfile();
+    this.getUserToken();
   }
 
   componentWillUnmount() {
@@ -43,19 +42,21 @@ export default class ProfileScreen extends Component {
         this.setState({
           token: token,
         });
-      } else {
-        this.props.navigation.replace('Login');
       }
     });
   };
 
   getUserProfile = () => {
     getData('user').then(res => {
-      const data = res;
-      // console.log('User Profile: ', res);
-      this.setState({
-        profile: data,
-      });
+      const profile = res;
+
+      if (profile) {
+        this.setState({
+          profile: profile,
+        });
+      } else {
+        this.props.navigation.replace('Login');
+      }
     });
   };
 
@@ -64,11 +65,7 @@ export default class ProfileScreen extends Component {
     return (
       <View style={styles.page}>
         <View style={styles.container}>
-          <Image
-            // source={profile.avatar ? { uri: profile.avatar } : DefaultPic}
-            source={DefaultPic}
-            style={styles.pic}
-          />
+          <Image source={DefaultPic} style={styles.pic} />
           <View style={styles.profile}>
             <Text style={styles.name}>{profile.name}</Text>
             <Text style={styles.desc}>Phone : {profile.phone}</Text>
@@ -103,7 +100,7 @@ const styles = StyleSheet.create({
     marginTop: -responsiveWidth(50),
   },
   profile: {
-    marginTop: 20,
+    marginTop: 30,
     marginBottom: 30,
     alignItems: 'center',
   },

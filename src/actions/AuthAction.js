@@ -35,8 +35,10 @@ export const registerUser = data => {
       })
       .catch(error => {
         // ERROR
+        if (error.response.status === 400) {
+          Alert.alert('Error', 'Email sudah digunakan!');
+        }
         dispatchError(dispatch, REGISTER_USER, error);
-        alert(error);
       });
   };
 };
@@ -54,15 +56,19 @@ export const loginUser = data => {
         saveData('token', response.data.access_token);
 
         dispatchSuccess(dispatch, LOGIN_USER, response.data);
+        console.log('User login: ', response.data.user.data);
 
-        saveData('user', response.data.user);
+        saveData('user', response.data.user.data);
       })
       .catch(error => {
         if (error.response.status === 401) {
           // ERROR
           dispatchError(dispatch, LOGIN_USER, error.response.status);
-          alert(error, 'Data tidak ditemukan');
+          Alert.alert('Error', 'Email atau Password Salah');
+        } else {
+          Alert.alert('Error', 'Data Tidak Ditemukan');
         }
+
         return error;
       });
   };

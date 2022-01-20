@@ -48,7 +48,7 @@ class Register extends Component {
 
       this.props.dispatch(registerUser(data));
     } else {
-      Alert.alert('Please fill in all the required fields');
+      Alert.alert('Info', 'Silahkan Isi Semua Bidang');
     }
   };
 
@@ -69,13 +69,12 @@ class Register extends Component {
             </View>
 
             <View style={styles.signup}>
-              <Text style={styles.title}> Signup </Text>
-              <Text style={styles.title}> Enter your details </Text>
+              <Text style={styles.title}> Register </Text>
             </View>
 
             <View style={styles.cardSignup}>
               <Input
-                label="Name"
+                label="Nama"
                 value={name}
                 onChangeText={name => this.setState({ name })}
               />
@@ -85,13 +84,13 @@ class Register extends Component {
                 onChangeText={email => this.setState({ email })}
               />
               <Input
-                label="Phone Number"
+                label="Nomor Telepon"
                 keyboardType="number-pad"
                 value={phone}
                 onChangeText={phone => this.setState({ phone })}
               />
               <Input
-                label="Address"
+                label="Alamat"
                 textarea
                 onChangeText={address => this.setState({ address })}
                 value={address}
@@ -104,10 +103,10 @@ class Register extends Component {
                 onChangeText={password => this.setState({ password })}
               />
 
-              <Distance height={30} />
+              <Distance height={25} />
 
               <Button
-                title="Continue"
+                title="Daftar"
                 type="textIcon"
                 icon="submit"
                 padding={12}
@@ -115,6 +114,18 @@ class Register extends Component {
                 onPress={() => this.onContinue()}
                 loading={registerLoading}
               />
+              <View style={styles.login}>
+                <Text
+                  style={styles.textBlue}
+                  onPress={() => this.props.navigation.navigate('Login')}>
+                  Sudah Punya Akun?
+                </Text>
+                <Text
+                  style={styles.textBlue}
+                  onPress={() => this.props.navigation.navigate('Login')}>
+                  Login Disini
+                </Text>
+              </View>
             </View>
           </ScrollView>
         </TouchableWithoutFeedback>
@@ -137,13 +148,14 @@ const styles = StyleSheet.create({
   },
   signup: {
     alignItems: 'center',
-    marginTop: responsiveHeight(50),
+    marginTop: responsiveHeight(30),
   },
   title: {
     fontSize: 24,
     fontFamily: fonts.primary.light,
     color: colors.primary,
     marginTop: 10,
+    textTransform: 'uppercase',
   },
   cardSignup: {
     backgroundColor: colors.white,
@@ -167,5 +179,15 @@ const styles = StyleSheet.create({
   btnBack: {
     marginLeft: 20,
     position: 'absolute',
+  },
+  login: {
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  textBlue: {
+    fontSize: 17,
+    fontFamily: fonts.primary.bold,
+    color: colors.primary,
   },
 });

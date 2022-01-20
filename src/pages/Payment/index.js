@@ -8,22 +8,23 @@ import { colors } from '../../utils';
 export class Payment extends Component {
   componentDidMount() {
     if (this.props.route.params.order_id) {
-      console.log(
-        'cek data params masuk payment page: ',
-        this.props.route.params,
-      );
-      this.props.dispatch(updateCart(this.props.route.params));
+      //   this.props.dispatch(updateCart(this.props.route.params));
     }
   }
 
-  // onMessage = data => {
-  //   if (data.nativeEvent.data === 'paid') {
-  //     this.props.navigation.replace('History');
-  //   }
-  // };
-
   handleNavigationStateChange = navState => {
-    console.log('navState ' + JSON.stringify(navState));
+    // const local = 'lar8api-web-mobile, http://';
+    // const ngrok = 'http://example.com';
+
+    // const conditions = ['lar8api-web-mobile', 'http://', 'http://example.com'];
+    // const result1 = conditions.some(el => local.includes(el));
+    // const result2 = conditions.some(el => ngrok.includes(el));
+    console.log('current state is ', JSON.stringify(navState, null, 2));
+    if (navState.url.includes('lar8api-web-mobile' || 'http://example.com')) {
+      this.props.navigation.replace('History');
+    } else {
+      console.log(navState);
+    }
   };
 
   render() {
@@ -37,7 +38,10 @@ export class Payment extends Component {
         ) : (
           <WebView
             source={{ uri: this.props.route.params.redirect_url }}
-            // onMessage={this.onMessage}
+            // onMessage={event => {
+            //   console.log(event);
+            //   event.nativeEvent.data;
+            // }}
             onNavigationStateChange={data =>
               this.handleNavigationStateChange(data)
             }

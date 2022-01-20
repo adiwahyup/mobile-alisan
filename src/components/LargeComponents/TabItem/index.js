@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   },
   text: isFocused => ({
     color: isFocused ? colors.white : colors.secondary,
-    fontSize: 11,
+    fontSize: 14,
     marginTop: 4,
     fontFamily: fonts.primary.bold,
   }),

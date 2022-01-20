@@ -1,17 +1,40 @@
+import axios from 'axios';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IconArrowRight } from '../../../assets';
-import { colors, responsiveHeight, fonts, clearStorage } from '../../../utils';
+import {
+  colors,
+  responsiveHeight,
+  fonts,
+  clearStorage,
+  API_URL,
+  getData,
+} from '../../../utils';
 
 const CardMenu = ({ menu, navigation }) => {
   const onSubmit = () => {
+    // getData('token').then(res => {
+    //   const token = res;
     if (menu.nama === 'Sign Out') {
-      console.log('Logout');
+      // axios({
+      //   method: 'POST',
+      //   url: `${API_URL.url}/logout`,
+      //   // headers: headers,
+      //   data: token,
+      // })
+      //   .then(response => {
+      //     console.log('response logout', response.data);
+      //   })
+      //   .catch(error => {
+      //     console.log('test logout', error);
+      //     alert(error);
+      //   });
       clearStorage();
       navigation.replace('MainApp');
     } else {
       navigation.navigate(menu.page);
     }
+    // });
   };
   return (
     <TouchableOpacity style={styles.container} onPress={() => onSubmit()}>

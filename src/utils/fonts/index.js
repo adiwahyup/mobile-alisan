@@ -1,8 +1,11 @@
 export const fonts = {
   primary: {
-    light: 'PublicSans-Light',
-    reguler: 'PublicSans-Regular',
-    semibold: 'PublicSans-SemiBold',
-    bold: 'PublicSans-Bold',
+    light: 'Roboto-Light',
+    reguler: 'Roboto-Regular',
+    black: 'Lato-Black',
+    bold: 'Lato-Bold',
+    italic: 'Roboto-Italic',
+    boldItalic: 'Roboto-BoldItalic',
+    medium: 'Roboto-Medium',
   },
 };

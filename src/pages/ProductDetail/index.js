@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Text, StyleSheet, View, Alert } from 'react-native';
-import InputSpinner from 'react-native-input-spinner';
 import { RFValue } from 'react-native-responsive-fontsize';
 import {
   colors,
@@ -12,10 +11,11 @@ import {
   getData,
   discount,
 } from '../../utils';
-import { ProductSlider, Button, Distance, Size } from '../../components';
+import { ProductSlider, Button, Size, Distance } from '../../components';
 import { addCart } from '../../actions/CartAction';
 import { getDetailProduct } from '../../actions/ProductAction';
 import { connect } from 'react-redux';
+import InputAmount from '../../components/SmallComponents/InputAmount';
 
 class ProductDetail extends Component {
   constructor(props) {
@@ -38,54 +38,45 @@ class ProductDetail extends Component {
     this.props.dispatch(
       getDetailProduct(this.props.route.params.product.product_slug),
     );
-    // console.log('tes split', split);
-
-    // const ssp = getSspResult.map(item => {
-    //   return item;
-    // });
-    // const split = ssp.split(', ')[0];
-
-    // console.log('test map ssp', ssp);
-    // this.setState({
-    //   size: getSspResult,
-    // });
   }
 
   componentDidUpdate(prevProps) {
     const { addCartResult, getSspResult } = this.props;
 
     if (addCartResult && prevProps.addCartResult !== addCartResult) {
-      this.props.navigation.navigate('Cart');
+      Alert.alert('Success', 'Product has been added to cart');
+      this.props.navigation.navigate('Home');
     }
     if (getSspResult && prevProps.getSspResult !== getSspResult) {
-      this.setState({
-        size: getSspResult,
-      });
+      this.sspResult(getSspResult);
     }
   }
 
+  sspResult = getSspResult => {
+    this.setState({
+      size: getSspResult,
+    });
+  };
+
   toCart = () => {
     const { qty, product_size, product } = this.state;
-    // const discount = (product.product_price * product.product_discount) / 100;
-    // const final = product.product_price - discount;
     getData('user').then(res => {
       if (res) {
-        // add uid local storage to state
         this.setState({
-          id: res.id,
+          id: res.uid,
           product_price: product.product_price,
           product_picture: product.product_picture.split(', ')[0],
         });
 
-        if (qty && product_size) {
-          // connect to action (cartAction)
+        if (qty < 1) {
+          Alert.alert('Info', 'Minimum Beli 1');
+        } else if (qty && product_size) {
           this.props.dispatch(addCart(this.state));
         } else {
-          Alert.alert('Error', 'Please enter all the details');
+          Alert.alert('Error', 'Isi semua detail');
         }
       } else {
-        Alert.alert('Info', 'Silahkan Login atau Daftar terlebih dahulu');
-        this.props.navigation.replace('Login');
+        this.props.navigation.navigate('Login');
       }
     });
   };
@@ -115,7 +106,7 @@ class ProductDetail extends Component {
         <ProductSlider images={images} />
         <View style={styles.container}>
           <View style={styles.desc}>
-            <Text style={styles.nama}>{product.product_name}</Text>
+            <Text style={styles.name}>{product.product_name}</Text>
             <View style={styles.price}>
               <Text style={styles.newPrice}>
                 Rp.{' '}
@@ -128,51 +119,37 @@ class ProductDetail extends Component {
               </Text>
             </View>
             <View style={styles.line} />
-            <View style={styles.wrapWeight}>
-              <Text style={styles.weight}>
-                Berat: {product.product_weight} gram
-              </Text>
-            </View>
             <View style={styles.wrapInput}>
-              <View style={styles.qty}>
-                <Text styles={styles.label}>Amount :</Text>
-                <InputSpinner
-                  style={styles.input}
-                  max={400}
-                  maxLength={400}
-                  min={0}
-                  step={1}
-                  skin="clean"
-                  colorMax={'#ffffff'}
-                  colorMin={'#ffffff'}
-                  colorPress="#bcbcbc"
-                  value={qty}
-                  onChange={qty => this.setState({ qty })}
-                />
-              </View>
+              <InputAmount
+                label="Jumlah"
+                width={responsiveWidth(166)}
+                height={responsiveHeight(-10)}
+                max={400}
+                maxLength={400}
+                min={0}
+                step={1}
+                skin="clean"
+                colorPress="#bcbcbc"
+                value={qty}
+                onChange={qty => this.setState({ qty })}
+              />
 
               <Size
                 width={responsiveWidth(166)}
-                height={responsiveHeight(48)}
-                label="Size"
+                height={responsiveHeight(58)}
+                label="Ukuran"
                 fontSize={13}
                 datas={size}
                 selectedValue={selectedsize}
                 onValueChange={selectedsize => this.selectedSize(selectedsize)}
               />
             </View>
-            {/* <Input
-              label="Notes"
-              textarea
-              fontSize={13}
-              placeholder="Tambahkan catatan..."
-              value={notes}
-              onChangeText={notes => this.setState({ notes })}
-            /> */}
-            <Distance height={15} />
+          </View>
+          <Distance height={20} />
+          <View style={styles.wrapCart}>
             <View style={styles.cart}>
               <Button
-                title="Add to Cart"
+                title="Tambah Keranjang"
                 type="textIcon"
                 icon="keranjang-putih"
                 padding={responsiveHeight(17)}
@@ -224,12 +201,13 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   desc: {
-    marginHorizontal: 30,
+    paddingHorizontal: 30,
   },
-  nama: {
+  name: {
     fontSize: RFValue(24, heightMobileUI),
     fontFamily: fonts.primary.bold,
     marginTop: 20,
+    color: colors.black,
   },
   discount: {
     fontSize: RFValue(20, heightMobileUI),
@@ -247,37 +225,17 @@ const styles = StyleSheet.create({
     fontSize: RFValue(24, heightMobileUI),
     fontFamily: fonts.primary.bold,
     marginRight: 5,
+    color: colors.black,
   },
   line: {
     borderWidth: 0.3,
     marginVertical: 5,
   },
-  wrapWeight: {
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  weight: {
-    fontSize: 13,
-    fontFamily: fonts.primary.reguler,
-    marginRight: 30,
-  },
   wrapInput: {
+    marginTop: responsiveHeight(20),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  input: {
-    width: responsiveWidth(169),
-    height: responsiveHeight(10),
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    borderRadius: 15,
-    shadowRadius: 6.84,
-    elevation: 2,
   },
   label: {
     fontFamily: fonts.primary.reguler,
@@ -285,5 +243,9 @@ const styles = StyleSheet.create({
   },
   cart: {
     alignContent: 'center',
+  },
+  wrapCart: {
+    marginTop: 58,
+    marginHorizontal: 30,
   },
 });

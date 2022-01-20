@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { deleteParamsProduct } from '../../../actions/ProductAction';
+
 import { colors } from '../../../utils';
 import TabItem from '../TabItem';
 
@@ -29,10 +29,6 @@ const BottomNavigator = ({ state, descriptors, navigation, dispatch }) => {
           if (!isFocused && !event.defaultPrevented) {
             // The `merge: true` option makes sure that the params inside the tab screen are preserved
             navigation.navigate({ name: route.name, merge: true });
-          }
-
-          if (route.name !== 'Product') {
-            dispatch(deleteParamsProduct());
           }
         };
 

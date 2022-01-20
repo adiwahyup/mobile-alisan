@@ -50,7 +50,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     padding: padding,
     borderRadius: 5,
-    alignItems: 'center',
     flexDirection: 'row',
     marginTop: 10,
   }),
@@ -59,7 +58,7 @@ const styles = StyleSheet.create({
     top: 5,
     left: 5,
     backgroundColor: 'red',
-    borderRadius: 3,
+    borderRadius: 4,
     padding: 3,
   },
   textNotif: {

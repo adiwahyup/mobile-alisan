@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { connect } from 'react-redux';
-import { cartProduct, getListCart } from '../../actions/CartAction';
+import { getListCart } from '../../actions/CartAction';
 import { ListCart, Button } from '../../components';
 import { dummyProduct } from '../../data';
 import {
@@ -18,32 +18,24 @@ class Cart extends Component {
 
     this.state = {
       product: dummyProduct,
-      jwt: '',
+      id: '',
     };
   }
   componentDidMount() {
-    getData('user').then(res => {
-      if (res) {
-        this.props.dispatch(getListCart(res.id));
-      } else {
-        this.props.navigation.replace('Login');
-      }
-    });
-    getData('token').then(res => {
-      const jwt = res;
-      if (jwt) {
-        console.log('token jwt before checkout:', jwt);
-        // this.setState({
-        //   jwt: jwt,
-        // });
-      }
-    });
-    getData('user').then(res => {
-      if (res) {
-        this.props.dispatch(cartProduct(res.id));
-      }
-    });
+    this.cartId();
   }
+
+  cartId = () => {
+    getData('user').then(res => {
+      const id = res.uid;
+      if (res) {
+        this.setState({
+          id: id,
+        });
+        this.props.dispatch(getListCart(id));
+      }
+    });
+  };
 
   componentDidUpdate(prevProps) {
     const { deleteCartResult } = this.props;
@@ -51,31 +43,25 @@ class Cart extends Component {
     if (deleteCartResult && prevProps.deleteCartResult !== deleteCartResult) {
       getData('user').then(res => {
         if (res) {
-          this.props.dispatch(getListCart(res.id));
-          // getData('token').then(res => {
-          //   const jwt = res;
-          //   if (jwt) {
-          //     console.log('token jwt update:', jwt);
-          //   }
-          // });
-        } else {
-          this.props.navigation.replace('Login');
+          this.props.dispatch(getListCart(this.state.id));
         }
       });
     }
   }
 
   dataCart = () => {
-    const { getListCartResult, cartProductResult } = this.props;
+    const { getListCartResult } = this.props;
 
-    Object.keys(cartProductResult).map((key, index) => {
-      const dataProduct = cartProductResult;
-      this.props.navigation.navigate('Checkout', {
-        totalPrice: getListCartResult.totalPrice,
-        totalWeight: getListCartResult.totalWeight,
-        date: getListCartResult.date,
-        dataProduct: dataProduct,
-      });
+    const dataProduct = Object.keys(getListCartResult.cart).map(
+      (key, index) => {
+        return getListCartResult.cart[key];
+      },
+    );
+    this.props.navigation.navigate('Checkout', {
+      totalPrice: getListCartResult.totalPrice,
+      totalWeight: getListCartResult.totalWeight,
+      date: getListCartResult.date,
+      dataProduct: dataProduct,
     });
   };
 
@@ -88,7 +74,7 @@ class Cart extends Component {
 
         <View style={styles.footer}>
           <View style={styles.total}>
-            <Text style={styles.textBold}>Total Price : </Text>
+            <Text style={styles.textBold}>Total Harga : </Text>
             <Text style={styles.textBold}>
               Rp{' '}
               {getListCartResult
@@ -98,20 +84,18 @@ class Cart extends Component {
           </View>
           {getListCartResult ? (
             <Button
-              title="Checkout"
-              type="textIcon"
-              fontSize={18}
+              title="Lanjutkan"
+              type="text"
+              fontSize={20}
               padding={responsiveHeight(15)}
-              icon="keranjang-putih"
               onPress={() => this.dataCart()}
             />
           ) : (
             <Button
-              title="Checkout"
-              type="textIcon"
+              title="Lanjutkan"
+              type="text"
               fontSize={18}
               padding={responsiveHeight(15)}
-              icon="keranjang-putih"
               disable={true}
             />
           )}
@@ -124,9 +108,6 @@ const mapStateToProps = state => ({
   getListCartLoading: state.CartReducer.getListCartLoading,
   getListCartResult: state.CartReducer.getListCartResult,
   getListCartError: state.CartReducer.getListCartError,
-
-  cartProductLoading: state.CartReducer.cartProductLoading,
-  cartProductResult: state.CartReducer.cartProductResult,
 
   deleteCartLoading: state.CartReducer.deleteCartLoading,
   deleteCartResult: state.CartReducer.deleteCartResult,
@@ -161,5 +142,6 @@ const styles = StyleSheet.create({
   textBold: {
     fontSize: 18,
     fontFamily: fonts.primary.bold,
+    color: colors.black,
   },
 });

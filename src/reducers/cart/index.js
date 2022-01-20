@@ -1,9 +1,4 @@
-import {
-  ADD_CART,
-  GET_LIST_CART,
-  CART_PRODUCT,
-  DELETE_CART,
-} from '../../actions/CartAction';
+import { ADD_CART, GET_LIST_CART, DELETE_CART } from '../../actions/CartAction';
 
 const initialState = {
   addCartLoading: false,
@@ -13,10 +8,6 @@ const initialState = {
   getListCartLoading: false,
   getListCartResult: false,
   getListCartError: false,
-
-  cartProductLoading: false,
-  cartProductResult: false,
-  cartProductError: false,
 
   deleteCartLoading: false,
   deleteCartResult: false,
@@ -31,14 +22,6 @@ export default function (state = initialState, action) {
         addCartLoading: action.payload.loading,
         addCartResult: action.payload.data,
         addCartError: action.payload.errorMessage,
-      };
-
-    case CART_PRODUCT:
-      return {
-        ...state,
-        cartProductLoading: action.payload.loading,
-        cartProductResult: action.payload.data,
-        cartProductError: action.payload.errorMessage,
       };
 
     case GET_LIST_CART:

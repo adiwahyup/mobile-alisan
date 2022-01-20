@@ -8,11 +8,9 @@ import {
 
 export const ADD_CART = 'ADD_CART';
 export const GET_LIST_CART = 'GET_LIST_CART';
-export const CART_PRODUCT = 'CART_PRODUCT';
 export const DELETE_CART = 'DELETE_CART';
 
 export const addCart = data => {
-  console.log('data', data);
   return dispatch => {
     dispatchLoading(dispatch, ADD_CART);
 
@@ -30,7 +28,6 @@ export const addCart = data => {
             parseFloat(
               discount(data.product_price, data.product.product_discount),
             );
-          // parseInt(data.qty) * parseInt(data.product_price);
 
           Firebase.database()
             .ref('carts')
@@ -126,26 +123,6 @@ export const getListCart = id => {
       })
       .catch(error => {
         dispatchError(dispatch, GET_LIST_CART, error);
-        alert(error);
-      });
-  };
-};
-
-export const cartProduct = id => {
-  return dispatch => {
-    dispatchLoading(dispatch, CART_PRODUCT);
-
-    Firebase.database()
-      .ref('carts/' + id)
-      .child('cart')
-      .once('value', querySnapshot => {
-        let data = querySnapshot.val();
-        // console.log('action cartProduct', data);
-
-        dispatchSuccess(dispatch, CART_PRODUCT, data);
-      })
-      .catch(error => {
-        dispatchError(dispatch, CART_PRODUCT, error);
         alert(error);
       });
   };

@@ -10,6 +10,7 @@ import History from './History';
 import Login from './Login';
 import Register from './Register/Register';
 import Order from './Order';
+import YourOrder from './YourOrder';
 import Payment from './Payment';
 
 export {
@@ -25,5 +26,6 @@ export {
   Login,
   Register,
   Order,
+  YourOrder,
   Payment,
 };

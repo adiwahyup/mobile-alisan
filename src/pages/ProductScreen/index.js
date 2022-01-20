@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, ScrollView, Alert } from 'react-native';
+import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { getListProduct } from '../../actions/ProductAction';
-import {
-  HeaderComponent,
-  ListProduct,
-  ListCategory,
-  Distance,
-} from '../../components';
+import { HeaderComponent, ListProduct, Distance } from '../../components';
 import { dummyProduct } from '../../data';
 import { colors, fonts } from '../../utils';
 
@@ -22,8 +17,6 @@ class ProductScreen extends Component {
 
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      // const { category_id } = this.props;
-      // this.props.dispatch(getListCategory());
       this.props.dispatch(getListProduct());
     });
   }
@@ -32,44 +25,19 @@ class ProductScreen extends Component {
     this._unsubscribe();
   }
 
-  componentDidUpdate(prevProps) {
-    const { category_id, keyword } = this.props;
-
-    if (category_id && prevProps.category_id !== category_id) {
-      this.props.dispatch(getListProduct(category_id, keyword));
-    }
-
-    // if (keyword && prevProps.keyword !== keyword) {
-    //   this.props.dispatch(getListProduct(keyword));
-    // }
-  }
-
   render() {
     const { product_dummy } = this.state;
-    const { navigation, categoryName, keyword } = this.props;
+    const { navigation } = this.props;
 
     return (
       <View style={styles.page}>
-        <HeaderComponent navigation={navigation} page="Product" />
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={styles.container}>
-          <View style={styles.product}>
-            <ListCategory navigation={navigation} />
-          </View>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <HeaderComponent navigation={navigation} />
 
           <View style={styles.product}>
-            {keyword ? (
-              <Text style={styles.label}>
-                Cari: <Text style={styles.boldLabel}>{keyword}</Text>
-              </Text>
-            ) : (
-              <Text style={styles.label}>
-                All <Text style={styles.boldLabel}>The Best</Text>
-                {categoryName ? categoryName : ' For You'}
-              </Text>
-            )}
-
+            <Text style={styles.label}>
+              Semua <Text style={styles.boldLabel}>Produk</Text>
+            </Text>
             <ListProduct
               navigation={navigation}
               product_dummy={product_dummy}
@@ -83,13 +51,7 @@ class ProductScreen extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  category_id: state.ProductReducer.category_id,
-  categoryName: state.ProductReducer.categoryName,
-  keyword: state.ProductReducer.keyword,
-});
-
-export default connect(mapStateToProps, null)(ProductScreen);
+export default connect()(ProductScreen);
 
 const styles = StyleSheet.create({
   container: {
@@ -101,7 +63,7 @@ const styles = StyleSheet.create({
   },
   product: {
     marginHorizontal: 30,
-    marginTop: 10,
+    marginTop: 25,
   },
   label: {
     fontSize: 18,

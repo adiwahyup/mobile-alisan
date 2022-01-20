@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -7,32 +7,59 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { colors } from '../../../utils';
+import { clearStorage, colors, responsiveWidth } from '../../../utils';
 import { CardHistory } from '../../SmallComponents';
+import Dialog from 'react-native-dialog';
 
 const ListHistory = ({
-  orderHistoryLoading,
-  orderHistoryResult,
+  showByUserIdLoading,
+  showByUserIdResult,
+  showByUserIdError,
   navigation,
+  token,
 }) => {
-  // console.log('list history: ', orderHistoryResult);
+  const [visible, setVisible] = useState(true);
+  function showDialog() {
+    setVisible(true);
+  }
+  const handleHome = () => {
+    setVisible(false);
+    navigation.navigate('Home');
+  };
+  const handleLogin = () => {
+    clearStorage();
+    navigation.replace('Login');
+
+    setVisible(false);
+  };
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.container}>
-        {orderHistoryResult ? (
-          Object.keys(orderHistoryResult).map(key => {
+        {showByUserIdResult.length ? (
+          Object.keys(showByUserIdResult).map(key => {
             return (
               <CardHistory
-                order={orderHistoryResult[key]}
+                order={showByUserIdResult[key]}
                 key={key}
                 navigation={navigation}
                 id={key}
+                token={token}
               />
             );
           })
-        ) : orderHistoryLoading ? (
+        ) : showByUserIdLoading ? (
           <View style={styles.loading}>
             <ActivityIndicator size="large" color={colors.primary} />
+          </View>
+        ) : showByUserIdError ? (
+          <View style={styles.dialog}>
+            {showDialog}
+            <Dialog.Container visible={visible}>
+              <Dialog.Title>Info</Dialog.Title>
+              <Dialog.Description>Silahkan Login Kembali</Dialog.Description>
+              <Dialog.Button label="Home" onPress={handleHome} />
+              <Dialog.Button label="Login" onPress={handleLogin} />
+            </Dialog.Container>
           </View>
         ) : (
           <Text>Data Kosong</Text>
@@ -43,15 +70,22 @@ const ListHistory = ({
 };
 
 const mapStateToProps = state => ({
-  orderHistoryLoading: state.HistoryReducer.orderHistoryLoading,
-  orderHistoryResult: state.HistoryReducer.orderHistoryResult,
+  showByUserIdLoading: state.HistoryReducer.showByUserIdLoading,
+  showByUserIdResult: state.HistoryReducer.showByUserIdResult,
+  showByUserIdError: state.HistoryReducer.showByUserIdError,
 });
 export default connect(mapStateToProps, null)(ListHistory);
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 30,
-    marginTop: 30,
+    marginHorizontal: responsiveWidth(20),
+    marginTop: 10,
+  },
+  dialog: {
+    flex: 1,
+    backgroundColor: '#000000',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   loading: {
     flex: 1,

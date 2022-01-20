@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  IconEditProfile,
-  IconChangePassword,
-  IconSignOut,
-  IconHistory,
-} from '../../assets';
+import { IconEditProfile, IconSignOut, IconHistory } from '../../assets';
 
 export const menu = [
   {
@@ -13,12 +8,6 @@ export const menu = [
     gambar: <IconEditProfile />,
     page: 'EditProfile',
   },
-  // {
-  //   id: 2,
-  //   nama: 'Change Password',
-  //   gambar: <IconChangePassword />,
-  //   page: 'ChangePassword',
-  // },
   {
     id: 3,
     nama: 'Order History',
@@ -27,7 +16,7 @@ export const menu = [
   },
   {
     id: 4,
-    nama: 'Sign Out',
+    nama: 'Logout',
     gambar: <IconSignOut />,
     page: 'MainApp',
   },
